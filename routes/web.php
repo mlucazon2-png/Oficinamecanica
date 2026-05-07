@@ -35,8 +35,14 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/clientes/{cliente}/veiculos', [VeiculoController::class, 'porCliente'])
          ->name('clientes.veiculos');
 
-    // Veículos
-    Route::resource('veiculos', VeiculoController::class);
+    // Veículos - rotas com {id} em vez de implicit model binding
+    Route::get('/veiculos', [VeiculoController::class, 'index'])->name('veiculos.index');
+    Route::get('/veiculos/create', [VeiculoController::class, 'create'])->name('veiculos.create');
+    Route::post('/veiculos', [VeiculoController::class, 'store'])->name('veiculos.store');
+    Route::get('/veiculos/{id}', [VeiculoController::class, 'show'])->name('veiculos.show');
+    Route::get('/veiculos/{id}/edit', [VeiculoController::class, 'edit'])->name('veiculos.edit');
+    Route::put('/veiculos/{id}', [VeiculoController::class, 'update'])->name('veiculos.update');
+    Route::delete('/veiculos/{id}', [VeiculoController::class, 'destroy'])->name('veiculos.destroy');
 
     // Mecânicos
     Route::resource('mecanicos', MecanicoController::class);
@@ -52,26 +58,26 @@ Route::middleware(['auth'])->group(function () {
          ->name('pecas.estoque');
 
     // Ordens de Serviço
-    Route::resource('ordens-servico', OrdemServicoController::class)->names([
-        'index'   => 'os.index',
-        'create'  => 'os.create',
-        'store'   => 'os.store',
-        'show'    => 'os.show',
-        'edit'    => 'os.edit',
-        'update'  => 'os.update',
-        'destroy' => 'os.destroy',
-    ]);
-    Route::patch('/ordens-servico/{ordemServico}/status',  [OrdemServicoController::class, 'atualizarStatus'])->name('os.status');
-    Route::patch('/ordens-servico/{ordemServico}/aprovar', [OrdemServicoController::class, 'aprovar'])->name('os.aprovar');
-    Route::patch('/ordens-servico/{ordemServico}/fechar',  [OrdemServicoController::class, 'fechar'])->name('os.fechar');
-    Route::get  ('/ordens-servico/{ordemServico}/print',   [OrdemServicoController::class, 'imprimir'])->name('os.print');
-    Route::post ('/ordens-servico/{ordemServico}/fotos',   [OrdemServicoController::class, 'uploadFotos'])->name('os.fotos.store');
-    Route::delete('/ordens-servico/{ordemServico}/fotos/{foto}', [OrdemServicoController::class, 'deletarFoto'])->name('os.fotos.destroy');
+    // Ordens de Serviço - rotas com {id} em vez de implicit model binding
+    Route::get('/ordens-servico', [OrdemServicoController::class, 'index'])->name('os.index');
+    Route::get('/ordens-servico/create', [OrdemServicoController::class, 'create'])->name('os.create');
+    Route::post('/ordens-servico', [OrdemServicoController::class, 'store'])->name('os.store');
+    Route::get('/ordens-servico/{id}', [OrdemServicoController::class, 'show'])->name('os.show');
+    Route::get('/ordens-servico/{id}/edit', [OrdemServicoController::class, 'edit'])->name('os.edit');
+    Route::put('/ordens-servico/{id}', [OrdemServicoController::class, 'update'])->name('os.update');
+    Route::delete('/ordens-servico/{id}', [OrdemServicoController::class, 'destroy'])->name('os.destroy');
+    
+    Route::patch('/ordens-servico/{id}/status',  [OrdemServicoController::class, 'atualizarStatus'])->name('os.status');
+    Route::patch('/ordens-servico/{id}/aprovar', [OrdemServicoController::class, 'aprovar'])->name('os.aprovar');
+    Route::patch('/ordens-servico/{id}/fechar',  [OrdemServicoController::class, 'fechar'])->name('os.fechar');
+    Route::get  ('/ordens-servico/{id}/print',   [OrdemServicoController::class, 'imprimir'])->name('os.print');
+    Route::post ('/ordens-servico/{id}/fotos',   [OrdemServicoController::class, 'uploadFotos'])->name('os.fotos.store');
+    Route::delete('/ordens-servico/{id}/fotos/{foto}', [OrdemServicoController::class, 'deletarFoto'])->name('os.fotos.destroy');
 
     // Itens da OS (serviços e peças)
-    Route::post  ('/ordens-servico/{ordemServico}/itens',        [ItemOsController::class, 'store'])->name('os.itens.store');
-    Route::put   ('/ordens-servico/{ordemServico}/itens/{item}', [ItemOsController::class, 'update'])->name('os.itens.update');
-    Route::delete('/ordens-servico/{ordemServico}/itens/{item}', [ItemOsController::class, 'destroy'])->name('os.itens.destroy');
+    Route::post  ('/ordens-servico/{id}/itens',        [ItemOsController::class, 'store'])->name('os.itens.store');
+    Route::put   ('/ordens-servico/{id}/itens/{item}', [ItemOsController::class, 'update'])->name('os.itens.update');
+    Route::delete('/ordens-servico/{id}/itens/{item}', [ItemOsController::class, 'destroy'])->name('os.itens.destroy');
 
     // Garantias
     Route::resource('garantias', GarantiaController::class)->only(['index','show','edit','update']);

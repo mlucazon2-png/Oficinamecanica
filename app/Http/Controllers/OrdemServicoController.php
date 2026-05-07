@@ -71,8 +71,9 @@ class OrdemServicoController extends Controller
     }
 
     // Ver OS completa
-    public function show(OrdemServico $ordemServico)
+    public function show($id)
     {
+        $ordemServico = OrdemServico::findOrFail($id);
         $ordemServico->load([
             'cliente','veiculo','mecanico',
             'itens.servico','itens.peca',
@@ -85,15 +86,17 @@ class OrdemServicoController extends Controller
         return view('ordens-servico.show', compact('ordemServico','servicos','pecas'));
     }
 
-    public function edit(OrdemServico $ordemServico)
+    public function edit($id)
     {
+        $ordemServico = OrdemServico::findOrFail($id);
         $mecanicos = Mecanico::where('ativo', true)->orderBy('nome')->get();
         return view('ordens-servico.edit', compact('ordemServico','mecanicos'));
     }
 
     // UC004/UC005 — Atualizar diagnóstico
-    public function update(Request $request, OrdemServico $ordemServico)
+    public function update(Request $request, $id)
     {
+        $ordemServico = OrdemServico::findOrFail($id);
         $data = $request->validate([
             'mecanico_id'   => 'nullable|exists:mecanicos,id',
             'diagnostico'   => 'nullable|string|max:5000',
@@ -105,12 +108,13 @@ class OrdemServicoController extends Controller
         $ordemServico->update($data);
         $ordemServico->recalcularTotais();
 
-        return redirect()->route('os.show', $ordemServico)
+        return redirect()->route('os.show', $ordemServico->id)
                ->with('success', 'OS atualizada!');
     }
 
-    public function destroy(OrdemServico $ordemServico)
+    public function destroy($id)
     {
+        $ordemServico = OrdemServico::findOrFail($id);
         if ($ordemServico->aprovado_cliente) {
             return back()->with('error', 'Não é possível excluir uma OS já aprovada.');
         }
@@ -119,8 +123,9 @@ class OrdemServicoController extends Controller
     }
 
     // UC007 — Mudar status
-    public function atualizarStatus(Request $request, OrdemServico $ordemServico)
+    public function atualizarStatus(Request $request, $id)
     {
+        $ordemServico = OrdemServico::findOrFail($id);
         $request->validate([
             'status' => 'required|in:aberta,em_diagnostico,aguardando_aprovacao,aprovada,em_execucao,aguardando_pecas,finalizada,cancelada',
         ]);
@@ -141,8 +146,9 @@ class OrdemServicoController extends Controller
     }
 
     // UC004 — Gerente aprova orçamento
-    public function aprovar(OrdemServico $ordemServico)
+    public function aprovar($id)
     {
+        $ordemServico = OrdemServico::findOrFail($id);
         $ordemServico->update([
             'aprovado_cliente' => true,
             'data_aprovacao'   => now(),
@@ -153,8 +159,9 @@ class OrdemServicoController extends Controller
     }
 
     // UC009 — Fechar OS
-    public function fechar(OrdemServico $ordemServico)
+    public function fechar($id)
     {
+        $ordemServico = OrdemServico::findOrFail($id);
         $ordemServico->update([
             'status'         => 'finalizada',
             'data_conclusao' => now(),
@@ -184,8 +191,9 @@ class OrdemServicoController extends Controller
     }
 
     // RN004 — Upload de fotos
-    public function uploadFotos(Request $request, OrdemServico $ordemServico)
+    public function uploadFotos(Request $request, $id)
     {
+        $ordemServico = OrdemServico::findOrFail($id);
         $request->validate([
             'fotos'   => 'required|array|max:10',
             'fotos.*' => 'image|mimes:jpeg,png,webp|max:5120',
@@ -205,8 +213,9 @@ class OrdemServicoController extends Controller
         return back()->with('success', count($request->file('fotos')) . ' foto(s) salva(s).');
     }
 
-    public function deletarFoto(OrdemServico $ordemServico, int $foto)
+    public function deletarFoto($id, int $foto)
     {
+        $ordemServico = OrdemServico::findOrFail($id);
         $fotoModel = $ordemServico->fotos()->findOrFail($foto);
         Storage::disk('public')->delete($fotoModel->path);
         $fotoModel->delete();
@@ -214,8 +223,9 @@ class OrdemServicoController extends Controller
     }
 
     // Imprimir OS (para PDF)
-    public function imprimir(OrdemServico $ordemServico)
+    public function imprimir($id)
     {
+        $ordemServico = OrdemServico::findOrFail($id);
         $ordemServico->load(['cliente','veiculo','mecanico','itens.servico','itens.peca','garantias']);
         return view('ordens-servico.print', compact('ordemServico'));
     }

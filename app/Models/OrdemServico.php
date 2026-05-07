@@ -54,7 +54,7 @@ class OrdemServico extends Model
             'aguardando_pecas'     => 'Aguardando Peças',
             'finalizada'           => 'Finalizada',
             'cancelada'            => 'Cancelada',
-            default                => $this->status,
+            default                => $this->status ?? 'Indefinida',
         };
     }
 

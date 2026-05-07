@@ -7,20 +7,28 @@
     <h5 class="mb-0 font-mono">{{ $ordemServico->numero }}</h5>
     <span class="badge badge-{{ $ordemServico->status }} fs-6">{{ $ordemServico->statusLabel() }}</span>
     <div class="ms-auto d-flex gap-2 flex-wrap no-print">
-        <a href="{{ route('os.print', $ordemServico) }}" target="_blank" class="btn btn-sm btn-outline-secondary">
+        <a href="{{ route('os.print', $ordemServico->id) }}" target="_blank" class="btn btn-sm btn-outline-secondary">
             <i class="bi bi-printer me-1"></i>Imprimir
         </a>
         @if(!$ordemServico->aprovado_cliente && auth()->user()->isGerente())
-        <form method="POST" action="{{ route('os.aprovar', $ordemServico) }}">
+        <form method="POST" action="{{ route('os.aprovar', $ordemServico->id) }}">
             @csrf @method('PATCH')
             <button class="btn btn-sm btn-success"><i class="bi bi-check2-circle me-1"></i>Aprovar Orçamento</button>
         </form>
         @endif
         @if($ordemServico->status !== 'finalizada' && $ordemServico->status !== 'cancelada')
-        <form method="POST" action="{{ route('os.fechar', $ordemServico) }}">
+        <form method="POST" action="{{ route('os.fechar', $ordemServico->id) }}">
             @csrf @method('PATCH')
             <button class="btn btn-sm btn-primary" onclick="return confirm('Finalizar esta OS?')">
                 <i class="bi bi-flag-fill me-1"></i>Finalizar OS
+            </button>
+        </form>
+        @endif
+        @if(!$ordemServico->aprovado_cliente)
+        <form method="POST" action="{{ route('os.destroy', $ordemServico->id) }}" style="display:inline;">
+            @csrf @method('DELETE')
+            <button class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza que deseja excluir esta OS? Esta ação não pode ser desfeita.')">
+                <i class="bi bi-trash me-1"></i>Excluir
             </button>
         </form>
         @endif
@@ -70,7 +78,7 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between">
                 Sintomas & Diagnóstico
-                <a href="{{ route('os.edit', $ordemServico) }}" class="btn btn-sm btn-outline-primary no-print">
+                <a href="{{ route('os.edit', $ordemServico->id) }}" class="btn btn-sm btn-outline-primary no-print">
                     <i class="bi bi-pencil me-1"></i>Editar
                 </a>
             </div>
@@ -90,7 +98,7 @@
         @if(!in_array($ordemServico->status, ['finalizada','cancelada']))
         <div class="card mt-3 no-print">
             <div class="card-body py-2">
-                <form method="POST" action="{{ route('os.status', $ordemServico) }}" class="d-flex gap-2 align-items-center">
+                <form method="POST" action="{{ route('os.status', $ordemServico->id) }}" class="d-flex gap-2 align-items-center">
                     @csrf @method('PATCH')
                     <select name="status" class="form-select form-select-sm" style="max-width:220px">
                         @foreach(['aberta','em_diagnostico','aguardando_aprovacao','aprovada','em_execucao','aguardando_pecas','finalizada','cancelada'] as $s)
@@ -126,7 +134,7 @@
                             <td class="font-mono">R$ {{ number_format($item->valor_unitario,2,',','.') }}</td>
                             <td class="font-mono fw-500">R$ {{ number_format($item->valor_total,2,',','.') }}</td>
                             <td class="no-print">
-                                <form method="POST" action="{{ route('os.itens.destroy',[$ordemServico,$item]) }}" onsubmit="return confirm('Remover item?')">
+                                <form method="POST" action="{{ route('os.itens.destroy',[$ordemServico->id,$item->id]) }}" onsubmit="return confirm('Remover item?')">
                                     @csrf @method('DELETE')
                                     <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
                                 </form>
@@ -159,7 +167,7 @@
             {{-- Adicionar item --}}
             @if(!in_array($ordemServico->status,['finalizada','cancelada']))
             <div class="card-footer no-print">
-                <form method="POST" action="{{ route('os.itens.store', $ordemServico) }}" class="row g-2 align-items-end">
+                <form method="POST" action="{{ route('os.itens.store', $ordemServico->id) }}" class="row g-2 align-items-end">
                     @csrf
                     <div class="col-md-2">
                         <select name="tipo" id="tipo-item" class="form-select form-select-sm">
@@ -213,7 +221,7 @@
                             <img src="{{ $foto->url() }}" class="img-fluid rounded" style="height:90px;width:100%;object-fit:cover"
                                  title="{{ $foto->tipo }} / {{ $foto->lado }}">
                             <span class="badge bg-dark position-absolute bottom-0 start-0 m-1" style="font-size:.6rem">{{ $foto->tipo }}</span>
-                            <form method="POST" action="{{ route('os.fotos.destroy',[$ordemServico,$foto->id]) }}" class="position-absolute top-0 end-0 m-1 no-print">
+                            <form method="POST" action="{{ route('os.fotos.destroy',[$ordemServico->id,$foto->id]) }}" class="position-absolute top-0 end-0 m-1 no-print">
                                 @csrf @method('DELETE')
                                 <button class="btn btn-danger btn-sm py-0 px-1"><i class="bi bi-x"></i></button>
                             </form>
@@ -221,7 +229,7 @@
                     </div>
                     @endforeach
                 </div>
-                <form method="POST" action="{{ route('os.fotos.store', $ordemServico) }}" enctype="multipart/form-data" class="no-print">
+                <form method="POST" action="{{ route('os.fotos.store', $ordemServico->id) }}" enctype="multipart/form-data" class="no-print">
                     @csrf
                     <div class="row g-2">
                         <div class="col-md-5">

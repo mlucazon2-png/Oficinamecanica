@@ -40,24 +40,28 @@ class VeiculoController extends Controller
         ]);
 
         $veiculo = Veiculo::create($data);
-        return redirect()->route('veiculos.show', $veiculo)
+        return redirect()->route('veiculos.show', $veiculo->id)
                ->with('success', 'Veículo cadastrado!');
     }
 
-    public function show(Veiculo $veiculo)
+    public function show($id)
     {
+        $veiculo = Veiculo::findOrFail($id);
         $veiculo->load(['cliente', 'ordens' => fn($q) => $q->latest()->limit(10)]);
-        return view('veiculos.show', compact('veiculo'));
+        $ordens = $veiculo->ordens;
+        return view('veiculos.show', compact('veiculo', 'ordens'));
     }
 
-    public function edit(Veiculo $veiculo)
+    public function edit($id)
     {
+        $veiculo = Veiculo::findOrFail($id);
         $clientes = Cliente::orderBy('nome')->get();
         return view('veiculos.edit', compact('veiculo', 'clientes'));
     }
 
-    public function update(Request $request, Veiculo $veiculo)
+    public function update(Request $request, $id)
     {
+        $veiculo = Veiculo::findOrFail($id);
         $data = $request->validate([
             'placa'    => 'required|string|max:10|unique:veiculos,placa,' . $veiculo->id,
             'marca'    => 'required|string|max:80',
@@ -69,11 +73,12 @@ class VeiculoController extends Controller
         ]);
 
         $veiculo->update($data);
-        return redirect()->route('veiculos.show', $veiculo)->with('success', 'Veículo atualizado!');
+        return redirect()->route('veiculos.show', $veiculo->id)->with('success', 'Veículo atualizado!');
     }
 
-    public function destroy(Veiculo $veiculo)
+    public function destroy($id)
     {
+        $veiculo = Veiculo::findOrFail($id);
         $veiculo->delete();
         return redirect()->route('veiculos.index')->with('success', 'Veículo removido.');
     }

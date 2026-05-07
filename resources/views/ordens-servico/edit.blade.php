@@ -11,7 +11,7 @@
         <i class="bi bi-pencil me-2"></i>Editar OS — <span class="font-mono">{{ $ordemServico->numero }}</span>
     </div>
     <div class="card-body">
-        <form method="POST" action="{{ route('os.update',$ordemServico) }}">
+        <form method="POST" action="{{ route('os.update',$ordemServico->id) }}">
             @csrf @method('PUT')
             <div class="row g-3">
                 <div class="col-md-6">
@@ -44,7 +44,7 @@
             </div>
             <div class="mt-4 d-flex gap-2">
                 <button class="btn btn-primary"><i class="bi bi-check-lg me-1"></i>Salvar</button>
-                <a href="{{ route('os.show',$ordemServico) }}" class="btn btn-outline-secondary">Cancelar</a>
+                <a href="{{ route('os.show',$ordemServico->id) }}" class="btn btn-outline-secondary">Cancelar</a>
             </div>
         </form>
     </div>

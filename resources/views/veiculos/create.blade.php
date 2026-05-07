@@ -6,7 +6,7 @@
 <div class="card">
     <div class="card-header"><i class="bi bi-car-front me-2"></i>{{ isset($veiculo) ? 'Editar' : 'Novo' }} Veículo</div>
     <div class="card-body">
-        <form method="POST" action="{{ isset($veiculo) ? route('veiculos.update',$veiculo) : route('veiculos.store') }}">
+        <form method="POST" action="{{ isset($veiculo) ? route('veiculos.update',$veiculo->id) : route('veiculos.store') }}">
             @csrf @if(isset($veiculo)) @method('PUT') @endif
             <div class="row g-3">
                 <div class="col-md-6">

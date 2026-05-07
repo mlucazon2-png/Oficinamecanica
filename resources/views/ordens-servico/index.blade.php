@@ -75,7 +75,7 @@
                         <td>R$ {{ number_format($os->valor_total,2,',','.') }}</td>
                         <td class="small text-muted">{{ $os->created_at->format('d/m/Y') }}</td>
                         <td class="text-end">
-                            <a href="{{ route('os.show',$os) }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-eye"></i></a>
+                            <a href="{{ route('os.show',$os->id) }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-eye"></i></a>
                         </td>
                     </tr>
                     @empty

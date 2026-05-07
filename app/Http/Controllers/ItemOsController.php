@@ -9,8 +9,9 @@ use Illuminate\Http\Request;
 
 class ItemOsController extends Controller
 {
-    public function store(Request $request, OrdemServico $ordemServico)
+    public function store(Request $request, $id)
     {
+        $ordemServico = OrdemServico::findOrFail($id);
         $data = $request->validate([
             'tipo'           => 'required|in:servico,peca',
             'servico_id'     => 'required_if:tipo,servico|nullable|exists:servicos,id',
@@ -32,8 +33,10 @@ class ItemOsController extends Controller
         return back()->with('success', 'Item adicionado!');
     }
 
-    public function update(Request $request, OrdemServico $ordemServico, ItemOs $item)
+    public function update(Request $request, $id, $itemId)
     {
+        $ordemServico = OrdemServico::findOrFail($id);
+        $item = ItemOs::findOrFail($itemId);
         $data = $request->validate([
             'descricao'      => 'required|string|max:255',
             'quantidade'     => 'required|numeric|min:0.001',
@@ -43,8 +46,10 @@ class ItemOsController extends Controller
         return back()->with('success', 'Item atualizado!');
     }
 
-    public function destroy(OrdemServico $ordemServico, ItemOs $item)
+    public function destroy($id, $itemId)
     {
+        $ordemServico = OrdemServico::findOrFail($id);
+        $item = ItemOs::findOrFail($itemId);
         $item->delete();
         return back()->with('success', 'Item removido.');
     }
