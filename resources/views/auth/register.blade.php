@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login — AutoTech Pro</title>
+    <title>Criar Conta — AutoTech Pro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 
@@ -30,7 +30,7 @@
             font-family: 'DM Sans', sans-serif;
             background: var(--bg);
             color: var(--text);
-            overflow: hidden;
+            overflow: auto;
         }
 
         #particles-canvas {
@@ -92,7 +92,7 @@
             display: flex;
             width: 100%;
             max-width: 860px;
-            min-height: 520px;
+            min-height: auto;
             border-radius: 18px;
             overflow: hidden;
             border: 1px solid var(--border2);
@@ -316,33 +316,6 @@
         }
         .toggle-pass:hover { color: var(--text2); }
 
-        .row-bottom {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1.3rem;
-            margin-top: .3rem;
-        }
-        .check-wrap {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-        }
-        .check-wrap input[type="checkbox"] {
-            width: 16px; height: 16px;
-            border-radius: 4px;
-            background: var(--surface2);
-            border: 1px solid rgba(255,255,255,.15);
-            accent-color: var(--red);
-            cursor: pointer;
-        }
-        .check-label {
-            font-size: 12.5px;
-            color: var(--text2);
-            user-select: none;
-        }
-
         .btn-entrar {
             width: 100%;
             padding: 13px;
@@ -419,11 +392,39 @@
             letter-spacing: .06em;
         }
 
+        .login-link {
+            text-align: center;
+            font-size: 12px;
+            margin-top: 1rem;
+        }
+
+        .login-link a {
+            color: var(--red);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color .2s;
+        }
+
+        .login-link a:hover {
+            color: var(--red-h);
+        }
+
+        .success-message {
+            background: rgba(76, 175, 80, .12);
+            border: 1px solid rgba(76, 175, 80, .3);
+            color: #81c784;
+        }
+
+        .error-message {
+            background: var(--red-dim);
+            border: 1px solid rgba(196,0,0,.3);
+            color: #E06060;
+        }
+
         @media (max-width: 640px) {
             .panel-left { display: none; }
             .login-split { max-width: 400px; }
             .panel-right { padding: 2rem 1.6rem; }
-            html, body { overflow: auto; }
         }
     </style>
 </head>
@@ -450,16 +451,16 @@
                 </div>
 
                 <div class="panel-headline">
-                    Gestão completa<br>da sua oficina.
-                    
+                    Cadastre-se e comece<br>a solicitar ordens.
+                    <span>Como cliente, você poderá fazer requisições de OS diretamente</span>
                 </div>
 
                 <ul class="panel-features">
-                    <li><i class="bi bi-clipboard2-check"></i> Ordens de Serviço</li>
-                    <li><i class="bi bi-box-seam"></i> Controle de Estoque</li>
-                    <li><i class="bi bi-people"></i> Gestão de Clientes</li>
-                    <li><i class="bi bi-bar-chart-line"></i> Relatórios e Métricas</li>
-                    <li><i class="bi bi-shield-check"></i> Controle de Garantias</li>
+                    <li><i class="bi bi-clipboard2-check"></i> Solicitar Ordens de Serviço</li>
+                    <li><i class="bi bi-car-front"></i> Gerenciar seus Veículos</li>
+                    <li><i class="bi bi-shield-check"></i> Acompanhar Garantias</li>
+                    <li><i class="bi bi-file-earmark-text"></i> Ver Histórico de Serviços</li>
+                    <li><i class="bi bi-bell"></i> Receber Atualizações</li>
                 </ul>
             </div>
 
@@ -467,18 +468,46 @@
         </div>
 
         <div class="panel-right">
-            <div class="login-heading">Bem-vindo</div>
-            <div class="login-sub">Acesse sua conta para continuar</div>
+            <div class="login-heading">Criar Conta</div>
+            <div class="login-sub">Preencha os dados abaixo para se cadastrar</div>
 
             @if($errors->any())
-            <div class="alert-box">
+            <div class="alert-box error-message">
                 <i class="bi bi-exclamation-circle-fill"></i>
                 <span>{{ $errors->first() }}</span>
             </div>
             @endif
 
-            <form method="POST" action="{{ route('login.post') }}" id="login-form">
+            @if(session('success'))
+            <div class="alert-box success-message">
+                <i class="bi bi-check-circle-fill"></i>
+                <span>{{ session('success') }}</span>
+            </div>
+            @endif
+
+            <form method="POST" action="{{ route('register.post') }}" id="register-form">
                 @csrf
+
+                <div class="field-group">
+                    <label class="field-label" for="name">Nome Completo</label>
+                    <div class="field-wrap">
+                        <i class="bi bi-person field-icon"></i>
+                        <input
+                            class="field-input"
+                            type="text"
+                            id="name"
+                            name="name"
+                            value="{{ old('name') }}"
+                            placeholder="Seu nome completo"
+                            required
+                            autofocus
+                            autocomplete="name"
+                        >
+                    </div>
+                    @error('name')
+                    <small style="color: #E06060; font-size: 11px; margin-top: 4px; display: block;">{{ $message }}</small>
+                    @enderror
+                </div>
 
                 <div class="field-group">
                     <label class="field-label" for="email">E-mail</label>
@@ -492,10 +521,12 @@
                             value="{{ old('email') }}"
                             placeholder="seu@email.com"
                             required
-                            autofocus
                             autocomplete="email"
                         >
                     </div>
+                    @error('email')
+                    <small style="color: #E06060; font-size: 11px; margin-top: 4px; display: block;">{{ $message }}</small>
+                    @enderror
                 </div>
 
                 <div class="field-group">
@@ -509,32 +540,44 @@
                             name="password"
                             placeholder="••••••••"
                             required
-                            autocomplete="current-password"
+                            autocomplete="new-password"
                             style="padding-right: 42px"
                         >
                         <button type="button" class="toggle-pass" id="toggle-pass" tabindex="-1">
                             <i class="bi bi-eye" id="eye-icon"></i>
                         </button>
                     </div>
+                    @error('password')
+                    <small style="color: #E06060; font-size: 11px; margin-top: 4px; display: block;">{{ $message }}</small>
+                    @enderror
                 </div>
 
-                <div class="row-bottom">
-                    <label class="check-wrap">
-                        <input type="checkbox" name="remember" id="remember">
-                        <span class="check-label">Lembrar acesso</span>
-                    </label>
+                <div class="field-group">
+                    <label class="field-label" for="password_confirmation">Confirmar Senha</label>
+                    <div class="field-wrap">
+                        <i class="bi bi-lock field-icon"></i>
+                        <input
+                            class="field-input"
+                            type="password"
+                            id="password_confirmation"
+                            name="password_confirmation"
+                            placeholder="••••••••"
+                            required
+                            autocomplete="new-password"
+                            style="padding-right: 42px"
+                        >
+                    </div>
                 </div>
 
                 <button type="submit" class="btn-entrar" id="btn-submit">
-                    <i class="bi bi-box-arrow-in-right"></i>
-                    <span class="btn-text">Entrar</span>
+                    <i class="bi bi-person-plus"></i>
+                    <span class="btn-text">Criar Conta</span>
                     <div class="btn-spinner"></div>
                 </button>
             </form>
 
-            <div style="text-align: center; font-size: 12px; margin-top: 1rem;">
-                <span style="color: var(--text3);">Não tem uma conta? </span>
-                <a href="{{ route('register') }}" style="color: var(--red); text-decoration: none; font-weight: 600; transition: color .2s;" onmouseover="this.style.color='var(--red-h)'" onmouseout="this.style.color='var(--red)'">Cadastre-se aqui</a>
+            <div class="login-link">
+                Já tem uma conta? <a href="{{ route('login') }}">Faça login</a>
             </div>
 
             <div class="divider"><span>AutoTech Pro</span></div>
@@ -626,7 +669,7 @@ document.getElementById('toggle-pass').addEventListener('click', function () {
     }
 });
 
-document.getElementById('login-form').addEventListener('submit', function () {
+document.getElementById('register-form').addEventListener('submit', function () {
     const btn = document.getElementById('btn-submit');
     btn.classList.add('loading');
     btn.disabled = true;
@@ -650,7 +693,7 @@ document.getElementById('btn-submit').addEventListener('click', function (e) {
 });
 
 (function () {
-    const els = document.querySelectorAll('.field-group, .row-bottom, .btn-entrar, .login-heading, .login-sub, .alert-box, .divider, .footer-note');
+    const els = document.querySelectorAll('.field-group, .btn-entrar, .login-heading, .login-sub, .alert-box, .login-link, .divider, .footer-note');
     els.forEach((el, i) => {
         el.style.opacity = '0';
         el.style.transform = 'translateY(10px)';

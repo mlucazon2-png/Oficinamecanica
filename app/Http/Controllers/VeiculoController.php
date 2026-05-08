@@ -22,14 +22,12 @@ class VeiculoController extends Controller
 
     public function create()
     {
-        $clientes = Cliente::orderBy('nome')->get();
-        return view('veiculos.create', compact('clientes'));
+        return view('veiculos.create');
     }
 
     public function store(Request $request)
     {
         $data = $request->validate([
-            'cliente_id' => 'required|exists:clientes,id',
             'placa'      => 'required|string|max:10|unique:veiculos,placa',
             'marca'      => 'required|string|max:80',
             'modelo'     => 'required|string|max:80',
@@ -39,6 +37,13 @@ class VeiculoController extends Controller
             'km_atual'   => 'nullable|integer|min:0',
         ]);
 
+        // Obter cliente do usuário autenticado
+        $cliente = auth()->user()->cliente;
+        if (!$cliente) {
+            return back()->withErrors(['cliente' => 'Usuário não tem perfil de cliente.']);
+        }
+
+        $data['cliente_id'] = $cliente->id;
         $veiculo = Veiculo::create($data);
         return redirect()->route('veiculos.show', $veiculo->id)
                ->with('success', 'Veículo cadastrado!');
@@ -55,8 +60,7 @@ class VeiculoController extends Controller
     public function edit($id)
     {
         $veiculo = Veiculo::findOrFail($id);
-        $clientes = Cliente::orderBy('nome')->get();
-        return view('veiculos.edit', compact('veiculo', 'clientes'));
+        return view('veiculos.edit', compact('veiculo'));
     }
 
     public function update(Request $request, $id)

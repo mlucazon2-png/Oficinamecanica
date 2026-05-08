@@ -63,7 +63,15 @@
                             <td><span class="badge badge-{{ $os->status }}">{{ $os->statusLabel() }}</span></td>
                             <td class="font-mono">R$ {{ number_format($os->valor_total,2,',','.') }}</td>
                             <td class="small text-muted">{{ $os->created_at->format('d/m/Y') }}</td>
-                            <td><a href="{{ route('os.show',$os) }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-eye"></i></a></td>
+                            <td class="text-end">
+                                <a href="{{ route('os.show', $os->id) }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-eye"></i></a>
+                                @if(!$os->aprovado_cliente || $os->status === 'cancelada')
+                                <form method="POST" action="{{ route('os.destroy', $os->id) }}" class="d-inline" onsubmit="return confirm('Tem certeza que deseja excluir esta OS?')">
+                                    @csrf @method('DELETE')
+                                    <button class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                </form>
+                                @endif
+                            </td>
                         </tr>
                         @empty
                         <tr><td colspan="6" class="text-center text-muted py-3">Nenhuma OS ainda.</td></tr>

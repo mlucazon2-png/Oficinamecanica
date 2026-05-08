@@ -31,6 +31,13 @@
                 <i class="bi bi-trash me-1"></i>Excluir
             </button>
         </form>
+        @elseif($ordemServico->status === 'cancelada')
+        <form method="POST" action="{{ route('os.destroy', $ordemServico->id) }}" style="display:inline;">
+            @csrf @method('DELETE')
+            <button class="btn btn-sm btn-outline-danger" onclick="return confirm('Tem certeza que deseja excluir esta OS? Esta ação não pode ser desfeita.')">
+                <i class="bi bi-trash me-1"></i>Excluir
+            </button>
+        </form>
         @endif
     </div>
 </div>
