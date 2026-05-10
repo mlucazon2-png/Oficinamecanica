@@ -6,10 +6,10 @@
 <div class="row">
     <div class="col-12">
         <div class="card">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <div><i class="bi bi-car-front me-2"></i>Veículos Cadastrados</div>
-                <a href="{{ route('veiculos.create') }}" class="btn btn-sm btn-primary">
-                    <i class="bi bi-plus-lg me-1"></i>Novo Veículo
+                <div class="card-header d-flex justify-content-between align-items-center">
+                <div class="d-flex align-items-center gap-2"><i class="bi bi-car-front me-2"></i>Meus Veículos</div>
+                <a href="{{ route('veiculos.create') }}" class="btn btn-sm btn-outline-primary">
+                    <i class="bi bi-plus-lg"></i> Cadastrar meu veículo
                 </a>
             </div>
             <div class="card-body p-0">
@@ -43,8 +43,8 @@
                     </tbody>
                 </table>
                 @else
-                <div class="alert alert-info m-3">
-                    <i class="bi bi-info-circle me-2"></i>Você ainda não possui veículos cadastrados.
+                <div class="alert alert-danger m-3">
+                    <i class="bi bi-exclamation-triangle me-2"></i>Você ainda não possui veículos cadastrados.
                 </div>
                 @endif
             </div>
@@ -52,3 +52,4 @@
     </div>
 </div>
 @endsection
+

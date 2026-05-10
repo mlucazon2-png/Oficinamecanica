@@ -111,4 +111,9 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/os',       [ClienteController::class, 'minhasOs'])->name('os');
         Route::get('/veiculos', [ClienteController::class, 'meusVeiculos'])->name('veiculos');
     });
+
+    // Modelos dependentes da Marca (catálogo local)
+    Route::get('/modelos-por-marca/{marcaId}', [VeiculoController::class, 'modelosPorMarca'])
+        ->name('veiculos.modelosPorMarca');
 });
+

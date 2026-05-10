@@ -13,18 +13,25 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // ── Usuários ────────────────────────────────────────────
-        User::create([
-            'name'     => 'Gerente AutoTech',
-            'email'    => 'gerente@autotech.com',
-            'password' => Hash::make('password'),
-            'role'     => 'gerente',
-        ]);
-        User::create([
-            'name'     => 'Atendente',
-            'email'    => 'atendente@autotech.com',
-            'password' => Hash::make('password'),
-            'role'     => 'atendente',
-        ]);
+        // Evita duplicidade caso o banco já tenha sido importado/seedado.
+        User::updateOrCreate(
+            ['email' => 'gerente@autotech.com'],
+            [
+                'name'     => 'Gerente AutoTech',
+                'password' => Hash::make('password'),
+                'role'     => 'gerente',
+            ]
+        );
+
+        User::updateOrCreate(
+            ['email' => 'atendente@autotech.com'],
+            [
+                'name'     => 'Atendente',
+                'password' => Hash::make('password'),
+                'role'     => 'atendente',
+            ]
+        );
+
 
         // ── Serviços ────────────────────────────────────────────
         $servicos = [
@@ -40,7 +47,10 @@ class DatabaseSeeder extends Seeder
             ['nome' => 'Troca de amortecedores',      'categoria' => 'mecanica',  'valor_mao_obra' => 180.00, 'tempo_estimado' => 100],
         ];
         foreach ($servicos as $s) {
-            Servico::create(array_merge($s, ['ativo' => true]));
+            Servico::updateOrCreate(
+                ['nome' => $s['nome']],
+                array_merge($s, ['ativo' => true])
+            );
         }
 
         // ── Peças ───────────────────────────────────────────────
@@ -57,7 +67,11 @@ class DatabaseSeeder extends Seeder
             ['nome' => 'Filtro combustível',   'codigo' => 'FC-001', 'fabricante' => 'Mann',   'preco_custo' => 22.00, 'preco_venda' => 42.00,  'estoque' => 10, 'estoque_minimo' => 3],
         ];
         foreach ($pecas as $p) {
-            Peca::create(array_merge($p, ['ativo' => true]));
+            Peca::updateOrCreate(
+                ['codigo' => $p['codigo']],
+                array_merge($p, ['ativo' => true])
+            );
         }
+
     }
 }

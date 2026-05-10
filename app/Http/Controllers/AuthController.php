@@ -41,6 +41,10 @@ class AuthController extends Controller
             'email'                 => 'required|email|max:150|unique:users,email',
             'password'              => 'required|string|min:8|confirmed',
             'password_confirmation' => 'required',
+
+            // Dados obrigatórios para criar o perfil do cliente
+            'cpf'      => 'required|string|max:14',
+            'telefone' => 'required|string|max:20',
         ], [
             'name.required'           => 'O nome é obrigatório.',
             'name.max'                => 'O nome não pode ter mais de 150 caracteres.',
@@ -50,7 +54,13 @@ class AuthController extends Controller
             'password.required'       => 'A senha é obrigatória.',
             'password.min'            => 'A senha deve ter no mínimo 8 caracteres.',
             'password.confirmed'      => 'As senhas não conferem.',
+
+            'cpf.required'           => 'O CPF é obrigatório.',
+            'cpf.max'                => 'O CPF não pode ter mais de 14 caracteres.',
+            'telefone.required'      => 'O telefone é obrigatório.',
+            'telefone.max'           => 'O telefone não pode ter mais de 20 caracteres.',
         ]);
+
 
         // Criar usuário com role 'cliente' automaticamente
         $user = User::create([
@@ -64,8 +74,12 @@ class AuthController extends Controller
         \App\Models\Cliente::create([
             'user_id'  => $user->id,
             'nome'     => $validated['name'],
+            // CPF é obrigatório na tabela `clientes`
+            'cpf'      => $request->input('cpf'),
+            'telefone' => $request->input('telefone'),
             'email'    => $validated['email'],
         ]);
+
 
         // Fazer login automático
         Auth::login($user);

@@ -941,12 +941,16 @@
         </a>
 
         <div class="nav-label">Cadastros</div>
-        <a href="{{ route('clientes.index') }}" class="nav-link {{ request()->routeIs('clientes.*') ? 'active' : '' }}">
-            <i class="bi bi-people"></i> Clientes
+
+        @if(auth()->user()->isCliente())
+        <a href="{{ route('conta.veiculos') }}" class="nav-link {{ request()->routeIs('conta.veiculos') ? 'active' : '' }}">
+            <i class="bi bi-car-front"></i> Veículos
         </a>
+        @else
         <a href="{{ route('veiculos.index') }}" class="nav-link {{ request()->routeIs('veiculos.*') ? 'active' : '' }}">
             <i class="bi bi-car-front"></i> Veículos
         </a>
+        @endif
         @if(auth()->user()->isGerente() || auth()->user()->isAtendente())
         <a href="{{ route('mecanicos.index') }}" class="nav-link {{ request()->routeIs('mecanicos.*') ? 'active' : '' }}">
             <i class="bi bi-person-gear"></i> Mecânicos
@@ -1049,6 +1053,15 @@
     @endif
 
     @yield('content')
+
+    @if ($errors && $errors->any())
+        <div class="toast-container" id="toast-container">
+            <div class="toast-at toast-error">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <span>Erro ao salvar: {{ $errors->first() }}</span>
+            </div>
+        </div>
+    @endif
 </main>
 
 <div id="search-modal" style="

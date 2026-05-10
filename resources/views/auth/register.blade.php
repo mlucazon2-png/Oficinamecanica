@@ -553,6 +553,46 @@
                 </div>
 
                 <div class="field-group">
+                    <label class="field-label" for="cpf">CPF</label>
+                    <div class="field-wrap">
+                        <i class="bi bi-person-badge field-icon"></i>
+                        <input
+                            class="field-input"
+                            type="text"
+                            id="cpf"
+                            name="cpf"
+                            value="{{ old('cpf') }}"
+                            placeholder="00000000000"
+                            required
+                            autocomplete="off"
+                        >
+                    </div>
+                    @error('cpf')
+                    <small style="color: #E06060; font-size: 11px; margin-top: 4px; display: block;">{{ $message }}</small>
+                    @enderror
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label" for="telefone">Telefone</label>
+                    <div class="field-wrap">
+                        <i class="bi bi-telephone field-icon"></i>
+                        <input
+                            class="field-input"
+                            type="text"
+                            id="telefone"
+                            name="telefone"
+                            value="{{ old('telefone') }}"
+                            placeholder="(00) 00000-0000"
+                            required
+                            autocomplete="off"
+                        >
+                    </div>
+                    @error('telefone')
+                    <small style="color: #E06060; font-size: 11px; margin-top: 4px; display: block;">{{ $message }}</small>
+                    @enderror
+                </div>
+
+                <div class="field-group">
                     <label class="field-label" for="password_confirmation">Confirmar Senha</label>
                     <div class="field-wrap">
                         <i class="bi bi-lock field-icon"></i>
@@ -570,6 +610,7 @@
                 </div>
 
                 <button type="submit" class="btn-entrar" id="btn-submit">
+
                     <i class="bi bi-person-plus"></i>
                     <span class="btn-text">Criar Conta</span>
                     <div class="btn-spinner"></div>

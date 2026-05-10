@@ -234,6 +234,22 @@ CREATE INDEX idx_os_created   ON ordens_servico(created_at);
 CREATE INDEX idx_peca_estoque ON pecas(estoque, estoque_minimo);
 
 -- ============================================================
+-- LIMPEZA (dados inconsistentes)
+-- ============================================================
+-- Remove usuários com role='cliente' que não possuem registro correspondente em `clientes`.
+-- Isso evita o erro do sistema: "Usuário não tem perfil de cliente".
+START TRANSACTION;
+
+DELETE FROM users u
+WHERE u.role = 'cliente'
+  AND NOT EXISTS (
+    SELECT 1 FROM clientes c WHERE c.user_id = u.id
+  );
+
+COMMIT;
+
+
+-- ============================================================
 -- DADOS INICIAIS
 -- ============================================================
 
@@ -242,6 +258,7 @@ INSERT INTO users (name, email, password, role, created_at, updated_at) VALUES
 ('Gerente AutoTech', 'gerente@autotech.com',
  '$2y$12$IWDNz1GFVJlXP0PH7a5YqO8fHGHkJvvgPlXqiYOQQwz6mYuT5WS7K',
  'gerente', NOW(), NOW());
+
 
 -- Serviços
 INSERT INTO servicos (nome, categoria, valor_mao_obra, tempo_estimado, ativo, created_at, updated_at) VALUES

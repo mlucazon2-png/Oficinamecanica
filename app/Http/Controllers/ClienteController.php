@@ -76,13 +76,28 @@ class ClienteController extends Controller
 
     public function minhasOs()
     {
-        $ordens = Auth::user()->cliente->ordens()->with(['veiculo'])->latest()->paginate(10);
+        $cliente = Auth::user()->cliente;
+
+        // Se o usuário não tem cadastro de cliente associado, evita 500.
+        if (!$cliente) {
+            return view('conta.os', ['ordens' => collect()]);
+        }
+
+        $ordens = $cliente->ordens()->with(['veiculo'])->latest()->paginate(10);
         return view('conta.os', compact('ordens'));
     }
 
     public function meusVeiculos()
     {
-        $veiculos = Auth::user()->cliente->veiculos()->latest()->get();
+        $cliente = Auth::user()->cliente;
+
+        // Se o usuário não tem cadastro de cliente associado, evita 500.
+        if (!$cliente) {
+            return view('conta.veiculos', ['veiculos' => collect()]);
+        }
+
+        $veiculos = $cliente->veiculos()->latest()->get();
         return view('conta.veiculos', compact('veiculos'));
     }
+
 }

@@ -5,7 +5,6 @@
 <div class="card">
     <div class="card-header d-flex justify-content-between">
         <span><i class="bi bi-car-front me-2"></i>Veículos</span>
-        <a href="{{ route('veiculos.create') }}" class="btn btn-sm btn-primary"><i class="bi bi-plus-lg me-1"></i>Novo Veículo</a>
     </div>
     <div class="card-body border-bottom">
         <form method="GET" class="row g-2">
@@ -30,7 +29,7 @@
                     <td>{{ $v->marca }} {{ $v->modelo }}</td>
                     <td>{{ $v->ano }}</td>
                     <td>{{ $v->cor ?? '—' }}</td>
-                    <td><a href="{{ route('clientes.show',$v->cliente) }}" class="text-decoration-none">{{ $v->cliente->nome }}</a></td>
+                    <td>{{ $v->cliente?->nome ?? '—' }}</td>
                     <td class="text-end">
                         <a href="{{ route('veiculos.edit',$v->id) }}" class="btn btn-sm btn-outline-primary"><i class="bi bi-pencil"></i></a>
                         <form method="POST" action="{{ route('veiculos.destroy',$v->id) }}" class="d-inline" onsubmit="return confirm('Excluir veículo?')">

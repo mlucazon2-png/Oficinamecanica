@@ -9,9 +9,7 @@
 <div class="card">
     <div class="card-header d-flex align-items-center justify-content-between">
         <span><i class="bi bi-people me-2"></i>Clientes</span>
-        <a href="{{ route('clientes.create') }}" class="btn btn-sm btn-primary">
-            <i class="bi bi-plus-lg me-1"></i>Novo Cliente
-        </a>
+
     </div>
     <div class="card-body border-bottom">
         <form method="GET" class="row g-2">
