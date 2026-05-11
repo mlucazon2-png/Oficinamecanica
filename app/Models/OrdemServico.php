@@ -46,6 +46,8 @@ class OrdemServico extends Model
     public function statusLabel(): string
     {
         return match($this->status) {
+            'aguardando_aceitacao' => 'aguardando aprovação',
+
             'aberta'               => 'Aberta',
             'em_diagnostico'       => 'Em Diagnóstico',
             'aguardando_aprovacao' => 'Aguardando Aprovação',
@@ -61,6 +63,7 @@ class OrdemServico extends Model
     public function statusCor(): string
     {
         return match($this->status) {
+            'aguardando_aceitacao' => 'danger',
             'aberta'               => 'secondary',
             'em_diagnostico'       => 'info',
             'aguardando_aprovacao' => 'warning',

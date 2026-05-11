@@ -10,7 +10,7 @@
             @csrf @method('PUT')
             <div class="row g-3">
                 <div class="col-md-6">
-                    <label class="form-label">Cliente</label>
+                    <label class="form-label">Proprietário</label>
                     <div class="form-control-plaintext fw-500">{{ $veiculo->cliente->nome }}</div>
                 </div>
                 <div class="col-md-3">

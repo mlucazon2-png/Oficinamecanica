@@ -18,59 +18,15 @@
     </div>
     <div class="card-body">
         <div class="row g-3">
-            <div class="col-md-6">
-                <div class="d-flex align-items-start gap-3">
-                    <div style="flex:0 0 220px; max-width:220px;">
-                        {{-- foto (não depende de banco, vem do storage) --}}
-                        @php
-                            $fotoUrl = null;
-                            if ($veiculo?->cliente) {
-                                $clienteId = $veiculo->cliente->id;
-                                $dir = "veiculos/{$clienteId}";
-
-                                $files = Storage::disk('public')->files($dir);
-                                $primeiro = collect($files)
-                                    ->first(fn($f) => preg_match('/\.(jpe?g|png|webp)$/i', $f));
-
-                                $fotoUrl = $primeiro ? Storage::disk('public')->url($primeiro) : null;
-                            }
-                        @endphp
-
-                        @if(!empty($fotoUrl))
-                            <div style="width:100%;height:220px;overflow:hidden;border-radius:8px;">
-                                <img src="{{ $fotoUrl }}" alt="Foto do veículo" style="width:100%;height:100%;object-fit:cover;display:block;" />
-                            </div>
-
-                        @else
-                            <div class="text-muted small" style="height:220px;display:flex;align-items:center;justify-content:center;border:1px dashed var(--border2);border-radius:8px;">Sem foto</div>
-                        @endif
-                    </div>
-
-
-                    <dl class="row mb-0" style="flex:1;">
-
-                    <dt class="col-5 text-muted">Placa</dt>
-                    <dd class="col-7 font-mono fw-500">{{ $veiculo->placa }}</dd>
-
-                    <dt class="col-5 text-muted">Marca</dt>
-                    <dd class="col-7">{{ $veiculo->marca }}</dd>
-
-                    <dt class="col-5 text-muted">Modelo</dt>
-                    <dd class="col-7">{{ $veiculo->modelo }}</dd>
-
-                    <dt class="col-5 text-muted">Ano</dt>
-                    <dd class="col-7">{{ $veiculo->ano }}</dd>
-                </dl>
-            </div>
-            <div class="col-md-4">
-                <div class="mb-3">
+            <div class="col-md-12">
+                <div class="d-flex align-items-start gap-3" style="flex-wrap:nowrap;">
+                    {{-- foto (não depende de banco, vem do storage) --}}
                     @php
                         $fotoUrl = null;
-                        if ($veiculo->cliente) {
+                        if ($veiculo?->cliente) {
                             $clienteId = $veiculo->cliente->id;
                             $dir = "veiculos/{$clienteId}";
 
-                            // pega o primeiro arquivo de imagem da pasta do cliente
                             $files = Storage::disk('public')->files($dir);
                             $primeiro = collect($files)
                                 ->first(fn($f) => preg_match('/\.(jpe?g|png|webp)$/i', $f));
@@ -79,22 +35,44 @@
                         }
                     @endphp
 
-                    @if($fotoUrl)
-                        <img src="{{ $fotoUrl }}" alt="Foto do veículo" class="img-fluid rounded" style="max-height:220px;object-fit:cover;" />
-                    @else
-                        <div class="text-muted small">Sem foto do veículo cadastrada.</div>
-                    @endif
+                    <div style="flex:0 0 220px; max-width:220px;">
+                        @if(!empty($fotoUrl))
+                            <div style="width:100%;height:220px;overflow:hidden;border-radius:8px;">
+                                <img src="{{ $fotoUrl }}" alt="Foto do veículo" style="width:100%;height:100%;object-fit:cover;display:block;" />
+                            </div>
+                        @else
+                            <div class="text-muted small" style="height:220px;display:flex;align-items:center;justify-content:center;border:1px dashed var(--border2);border-radius:8px;">Sem foto</div>
+                        @endif
+                    </div>
+
+                    {{-- bloco à direita (placa/marca/modelo/ano) --}}
+                    <div style="flex:1; min-width: 250px;">
+                        <dl class="row mb-0">
+                            <dt class="col-5">Placa</dt>
+                            <dd class="col-7 font-mono fw-800" style="color:#b00020;font-weight:900;">{{ $veiculo->placa }}</dd>
+
+                            <dt class="col-5">Marca</dt>
+                            <dd class="col-7 fw-800" style="color:#b00020;font-weight:900;">{{ $veiculo->marca }}</dd>
+
+                            <dt class="col-5">Modelo</dt>
+                            <dd class="col-7 fw-800" style="color:#b00020;font-weight:900;">{{ $veiculo->modelo }}</dd>
+
+                            <dt class="col-5">Ano</dt>
+                            <dd class="col-7 fw-800" style="color:#b00020;font-weight:900;">{{ $veiculo->ano }}</dd>
+                        </dl>
+                    </div>
+
+                    {{-- bloco à direita (cor/km) --}}
+                    <div style="flex:1; min-width: 200px;">
+                        <dl class="row mb-0">
+                            <dt class="col-5">Cor</dt>
+                            <dd class="col-7 fw-900" style="color:#b00020;font-weight:900;">{{ $veiculo->cor ?? '—' }}</dd>
+
+                            <dt class="col-5">Km atual</dt>
+                            <dd class="col-7 font-mono fw-900" style="color:#b00020;font-weight:900;">{{ $veiculo->km_atual ? number_format($veiculo->km_atual,0,',','.') : '—' }}</dd>
+                        </dl>
+                    </div>
                 </div>
-            </div>
-
-            <div class="col-md-8">
-                <dl class="row">
-                    <dt class="col-5 text-muted">Cor</dt>
-                    <dd class="col-7">{{ $veiculo->cor ?? '—' }}</dd>
-
-                    <dt class="col-5 text-muted">Km atual</dt>
-                    <dd class="col-7 font-mono">{{ $veiculo->km_atual ? number_format($veiculo->km_atual,0,',','.') : '—' }}</dd>
-                </dl>
             </div>
         </div>
     </div>

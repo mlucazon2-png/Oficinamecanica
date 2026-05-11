@@ -10,57 +10,66 @@
         <i class="bi bi-clipboard2-plus me-2"></i>Abrir Ordem de Serviço (UC003)
     </div>
     <div class="card-body">
-        <form method="POST" action="{{ route('os.store') }}">
+        <form method="POST" action="{{ route('os.store') }}" enctype="multipart/form-data">
             @csrf
             <div class="row g-3">
-                {{-- Cliente --}}
-                <div class="col-md-6">
-                    <label class="form-label">Cliente *</label>
-                    <select name="cliente_id" id="sel-cliente" class="form-select @error('cliente_id') is-invalid @enderror" required>
-                        <option value="">Selecione o cliente…</option>
-                        @foreach($clientes as $c)
-                        <option value="{{ $c->id }}" {{ old('cliente_id') == $c->id ? 'selected' : '' }}>
-                            {{ $c->nome }} — {{ $c->cpf }}
-                        </option>
-                        @endforeach
-                    </select>
-                    @error('cliente_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
-                </div>
+                {{-- Cliente (oculto) --}}
+                <input type="hidden" name="cliente_id" value="{{ optional(Auth::user()->cliente)->id }}">
+
 
                 {{-- Veículo (dinâmico via JS) --}}
                 <div class="col-md-6">
                     <label class="form-label">Veículo *</label>
                     <select name="veiculo_id" id="sel-veiculo" class="form-select @error('veiculo_id') is-invalid @enderror" required>
-                        <option value="">Selecione o cliente primeiro…</option>
+                        <option value="">Selecione o veículo…</option>
                     </select>
                     @error('veiculo_id')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
 
-                {{-- Mecânico --}}
-                <div class="col-md-6">
-                    <label class="form-label">Mecânico responsável</label>
-                    <select name="mecanico_id" class="form-select">
-                        <option value="">A definir</option>
-                        @foreach($mecanicos as $m)
-                        <option value="{{ $m->id }}" {{ old('mecanico_id') == $m->id ? 'selected' : '' }}>{{ $m->nome }}</option>
-                        @endforeach
-                    </select>
-                </div>
-
                 {{-- KM --}}
                 <div class="col-md-6">
-                    <label class="form-label">Km na entrada</label>
-                    <input type="number" name="km_entrada" class="form-control font-mono"
-                           value="{{ old('km_entrada') }}" placeholder="ex: 45000" min="0">
+                    <label class="form-label">Km na estrada</label>
+                    <div class="input-group">
+                        <input type="number" name="km_entrada" id="km_entrada" class="form-control font-mono"
+                               value="{{ old('km_entrada') }}" placeholder="ex: 45000" min="0" aria-label="Km na entrada" step="1">
+                        <span class="input-group-text">km</span>
+                    </div>
+                    <div class="form-text">Ao selecionar o veículo, preenche automaticamente o km atual.</div>
                 </div>
 
                 {{-- Sintomas --}}
                 <div class="col-12">
-                    <label class="form-label">Sintomas / Queixa do cliente *</label>
+                    <label class="form-label">Sintomas/Sua queixa </label>
                     <textarea name="sintomas" class="form-control @error('sintomas') is-invalid @enderror"
-                              rows="4" required placeholder="Descreva o que o cliente relatou…">{{ old('sintomas') }}</textarea>
+                              rows="4" required placeholder="Descreva seu relato…">{{ old('sintomas') }}</textarea>
+
                     @error('sintomas')<div class="invalid-feedback">{{ $message }}</div>@enderror
                 </div>
+
+                {{-- Mídia para diagnóstico (na hora de abrir) --}}
+                <div class="col-md-6">
+                    <label class="form-label">Foto do defeito (obrigatória) </label>
+                    <input type="file" name="foto_defeito" id="foto_defeito" class="form-control @error('foto_defeito') is-invalid @enderror" accept="image/*" required>
+
+                    @error('foto_defeito')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    <div class="form-text">Envie uma foto para ajudar no diagnóstico.</div>
+
+                    <div class="mt-2" id="preview-foto" style="display:none;">
+                        <img id="img-preview" class="img-fluid rounded" style="max-height:160px;object-fit:cover;" alt="Prévia da foto" />
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="form-label">Vídeo do defeito (Opcional)  </label>
+                    <input type="file" name="video_defeito" id="video_defeito" class="form-control @error('video_defeito') is-invalid @enderror" accept="video/*">
+                    @error('video_defeito')<div class="invalid-feedback">{{ $message }}</div>@enderror
+                    <div class="form-text">Se o defeito for perceptível/audível, envie vídeo também.</div>
+
+                    <div class="mt-2" id="preview-video" style="display:none;">
+                        <video id="video-preview" class="w-100 rounded" style="max-height:160px;object-fit:cover;" controls></video>
+                    </div>
+                </div>
+
             </div>
 
             <div class="mt-4 d-flex gap-2">
@@ -77,15 +86,14 @@
 
 @push('scripts')
 <script>
-document.getElementById('sel-cliente').addEventListener('change', function () {
-    const clienteId = this.value;
+(function () {
+    const clienteId = document.querySelector('input[name="cliente_id"]').value;
     const sel = document.getElementById('sel-veiculo');
-    sel.innerHTML = '<option value="">Carregando…</option>';
+    const kmEntrada = document.getElementById('km_entrada');
 
-    if (!clienteId) {
-        sel.innerHTML = '<option value="">Selecione o cliente primeiro…</option>';
-        return;
-    }
+    if (!clienteId) return;
+
+    sel.innerHTML = '<option value="">Carregando…</option>';
 
     fetch(`/clientes/${clienteId}/veiculos`)
         .then(r => r.json())
@@ -96,9 +104,70 @@ document.getElementById('sel-cliente').addEventListener('change', function () {
             }
             sel.innerHTML = '<option value="">Selecione o veículo…</option>';
             veiculos.forEach(v => {
-                sel.innerHTML += `<option value="${v.id}">${v.marca} ${v.modelo} ${v.ano} — ${v.placa}</option>`;
+                sel.innerHTML += `<option value="${v.id}" data-km-atual="${v.km_atual ?? ''}">${v.marca} ${v.modelo} ${v.ano} — ${v.placa}</option>`;
+            });
+
+            // Pré-preencher km (km atual do veículo)
+            const optInicial = sel.options[sel.selectedIndex];
+            if (optInicial) {
+                const km = optInicial.getAttribute('data-km-atual');
+                if (km !== null && km !== '') {
+                    kmEntrada.value = km;
+                }
+            }
+
+            sel.addEventListener('change', function () {
+                const opt = sel.options[sel.selectedIndex];
+                if (!opt) return;
+                const km = opt.getAttribute('data-km-atual');
+                if (km !== null && km !== '') {
+                    kmEntrada.value = km;
+                }
             });
         });
-});
+})();
+
+(function () {
+    const fotoInput = document.getElementById('foto_defeito');
+    const videoInput = document.getElementById('video_defeito');
+
+    const previewFoto = document.getElementById('preview-foto');
+    const imgPreview = document.getElementById('img-preview');
+
+    const previewVideo = document.getElementById('preview-video');
+    const videoPreview = document.getElementById('video-preview');
+
+    if (fotoInput && previewFoto && imgPreview) {
+        fotoInput.addEventListener('change', function () {
+            const file = this.files && this.files[0];
+            if (!file) {
+                previewFoto.style.display = 'none';
+                imgPreview.removeAttribute('src');
+                return;
+            }
+
+            const url = URL.createObjectURL(file);
+            imgPreview.src = url;
+            previewFoto.style.display = '';
+        });
+    }
+
+    if (videoInput && previewVideo && videoPreview) {
+        videoInput.addEventListener('change', function () {
+            const file = this.files && this.files[0];
+            if (!file) {
+                previewVideo.style.display = 'none';
+                videoPreview.removeAttribute('src');
+                videoPreview.load();
+                return;
+            }
+
+            const url = URL.createObjectURL(file);
+            videoPreview.src = url;
+            previewVideo.style.display = '';
+        });
+    }
+})();
 </script>
 @endpush
+

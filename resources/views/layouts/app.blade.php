@@ -946,6 +946,10 @@
         <a href="{{ route('conta.veiculos') }}" class="nav-link {{ request()->routeIs('conta.veiculos') ? 'active' : '' }}">
             <i class="bi bi-car-front"></i> Veículos
         </a>
+        @elseif(auth()->user()->isAtendente())
+        <a href="{{ route('conta.clientes') }}" class="nav-link {{ request()->routeIs('conta.clientes') ? 'active' : '' }}">
+            <i class="bi bi-people"></i> Clientes
+        </a>
         @else
         <a href="{{ route('veiculos.index') }}" class="nav-link {{ request()->routeIs('veiculos.*') ? 'active' : '' }}">
             <i class="bi bi-car-front"></i> Veículos
@@ -964,6 +968,21 @@
         <a href="{{ route('garantias.index') }}" class="nav-link {{ request()->routeIs('garantias.*') ? 'active' : '' }}">
             <i class="bi bi-shield-check"></i> Garantias
         </a>
+
+        @if(auth()->user()->isGerente() || auth()->user()->isAtendente())
+        <a href="{{ route('notificacoes.index') }}" class="nav-link {{ request()->routeIs('notificacoes.*') ? 'active' : '' }}">
+            <i class="bi bi-bell"></i> Notificações
+            @php
+            $nao_lidas = \App\Models\Notificacao::where('user_id', auth()->id())
+                ->where('lida', false)
+                ->where('status', 'pendente')
+                ->count();
+            @endphp
+            @if($nao_lidas > 0)
+            <span class="nav-badge" style="background: #e05555;">{{ $nao_lidas }}</span>
+            @endif
+        </a>
+        @endif
 
         @if(auth()->user()->isGerente() || auth()->user()->isAtendente())
         <div class="nav-label">Estoque</div>
@@ -1015,11 +1034,55 @@
         <button class="topbar-btn" title="Pesquisar" onclick="openSearch()">
             <i class="bi bi-search"></i>
         </button>
-        <button class="topbar-btn no-print" title="Notificações">
+        <button class="topbar-btn no-print" title="Notificações" type="button" onclick="toggleMiniNotifs()">
             <i class="bi bi-bell"></i>
             <span class="notif-dot"></span>
         </button>
+
+        <div id="mini-notificacoes" class="mini-notificacoes" style="display:none; position:absolute; top:62px; right:28px; width:360px; z-index:9500;">
+            <div class="card" style="background:var(--surface); border:1px solid var(--border2); border-radius:var(--radius); overflow:hidden;">
+                <div class="card-header" style="background:var(--surface); border-bottom:1px solid var(--border); border-radius:0 !important;">
+                    <i class="bi bi-bell-fill me-2 text-warning"></i> Notificações
+                    <span style="margin-left:auto; font-family:var(--radius-sm);"></span>
+                </div>
+                <div class="card-body" style="padding:.6rem .8rem;">
+                    @php
+                        $nao_lidas = \App\Models\Notificacao::where('user_id', auth()->id())
+                            ->where('lida', false)
+                            ->where('status', 'pendente')
+                            ->orderByDesc('created_at')
+                            ->limit(5)
+                            ->get();
+                    @endphp
+
+                    @if($nao_lidas->isEmpty())
+                        <div class="text-center text-muted" style="padding:1rem 0; font-size:13px;">Nenhuma solicitação pendente.</div>
+                    @else
+                        <div style="display:flex; flex-direction:column; gap:8px;">
+                            @foreach($nao_lidas as $n)
+                                <a href="{{ route('os.show', $n->os) }}" class="text-decoration-none" style="border:1px solid var(--border2); border-radius:10px; padding:.6rem .7rem; background:rgba(255,255,255,.02);">
+                                    <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
+                                        <div style="font-family: 'DM Mono', monospace; color:var(--text); font-size:12.5px;">OS {{ $n->os->numero }}</div>
+                                        <span style="font-size:10px; color:var(--warning-text); background:var(--warning-bg); padding:2px 8px; border-radius:99px;">Pendente</span>
+                                    </div>
+                                    <div style="margin-top:4px; font-size:12.5px; color:var(--text2);">
+                                        {{ $n->os->cliente->nome }} · {{ $n->os->veiculo->marca }} {{ $n->os->veiculo->modelo }}
+                                    </div>
+
+
+                                </a>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+                <div class="card-footer" style="background:var(--surface); border-top:1px solid var(--border); display:flex; justify-content:flex-end;">
+                    <a href="{{ route('notificacoes.index') }}" class="btn btn-sm btn-outline-secondary">Ver todas</a>
+                </div>
+            </div>
+        </div>
+
         <a href="{{ route('os.create') }}" class="btn-nova-os no-print">
+
             <i class="bi bi-plus-lg"></i>
             <span class="btn-text">Nova OS</span>
         </a>
@@ -1076,7 +1139,8 @@
     ">
         <div style="display:flex;align-items:center;padding:.85rem 1rem;gap:10px;border-bottom:1px solid var(--border)">
             <i class="bi bi-search" style="color:var(--text3);font-size:15px"></i>
-            <input id="search-input" type="text" placeholder="Pesquisar clientes, OS, veículos…"
+            <input id="search-input" type="text" placeholder="Pesquisar OS, veículos…"
+
                    style="flex:1;background:none;border:none;outline:none;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px"
                    oninput="handleSearch(this.value)">
             <kbd style="background:var(--surface3);border:1px solid var(--border2);border-radius:4px;padding:2px 7px;font-size:10px;color:var(--text3)">ESC</kbd>
@@ -1159,6 +1223,29 @@ document.addEventListener('keydown', e => {
 
 function handleSearch(val) {
     const res = document.getElementById('search-results');
+
+}
+
+function toggleMiniNotifs() {
+    const el = document.getElementById('mini-notificacoes');
+    if (!el) return;
+    const isHidden = el.style.display === 'none' || !el.style.display;
+    el.style.display = isHidden ? 'block' : 'none';
+}
+
+document.addEventListener('click', (e) => {
+    const el = document.getElementById('mini-notificacoes');
+    const btn = e.target.closest('.topbar-btn.no-print[title="Notificações"]');
+    if (!el) return;
+    if (btn) return;
+    if (!el.contains(e.target)) {
+        el.style.display = 'none';
+    }
+});
+
+function handleSearch(val) {
+    const res = document.getElementById('search-results');
+
     if (!val.trim()) {
         res.innerHTML = '<div style="color:var(--text3);font-size:12px;text-align:center;padding:1rem 0"><i class="bi bi-search" style="display:block;font-size:24px;margin-bottom:6px;opacity:.3"></i>Digite para buscar…</div>';
         return;

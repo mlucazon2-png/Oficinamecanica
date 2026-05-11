@@ -177,7 +177,11 @@ class VeiculoController extends Controller
     // Retorna veículos de um cliente em JSON (para select dinâmico na OS)
     public function porCliente(Cliente $cliente)
     {
-        return response()->json($cliente->veiculos()->select('id','placa','marca','modelo','ano')->get());
+        return response()->json(
+            $cliente->veiculos()
+                ->select('id', 'placa', 'marca', 'modelo', 'ano', 'km_atual')
+                ->get()
+        );
     }
 }
 

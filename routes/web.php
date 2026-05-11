@@ -13,6 +13,7 @@ use App\Http\Controllers\ItemOsController;
 use App\Http\Controllers\GarantiaController;
 use App\Http\Controllers\FipeController;
 use App\Http\Controllers\RelatorioController;
+use App\Http\Controllers\NotificacaoController;
 
 // ── Rotas públicas ───────────────────────────────────────────────────────────
 Route::get('/', fn () => redirect()->route('login'));
@@ -81,6 +82,15 @@ Route::middleware(['auth'])->group(function () {
     Route::put   ('/ordens-servico/{id}/itens/{item}', [ItemOsController::class, 'update'])->name('os.itens.update');
     Route::delete('/ordens-servico/{id}/itens/{item}', [ItemOsController::class, 'destroy'])->name('os.itens.destroy');
 
+    // Notificações (Sistema de Comunicação) - Apenas para Atendentes e Gerentes
+    Route::middleware('role:atendente,gerente')->prefix('notificacoes')->name('notificacoes.')->group(function () {
+        Route::get('/', [NotificacaoController::class, 'index'])->name('index');
+        Route::post('/{notificacao}/aceitar', [NotificacaoController::class, 'aceitar'])->name('aceitar');
+        Route::post('/{notificacao}/recusar', [NotificacaoController::class, 'recusar'])->name('recusar');
+        Route::post('/{notificacao}/lida', [NotificacaoController::class, 'marcarLida'])->name('lida');
+        Route::get('/contar/nao-lidas', [NotificacaoController::class, 'contarNaoLidas'])->name('contar');
+    });
+
     // Garantias
     Route::resource('garantias', GarantiaController::class)->only(['index','show','edit','update']);
     Route::patch('/garantias/{garantia}/acionar', [GarantiaController::class, 'acionar'])->name('garantias.acionar');
@@ -110,6 +120,11 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware('role:cliente')->prefix('minha-conta')->name('conta.')->group(function () {
         Route::get('/os',       [ClienteController::class, 'minhasOs'])->name('os');
         Route::get('/veiculos', [ClienteController::class, 'meusVeiculos'])->name('veiculos');
+    });
+
+    // Área do atendente - Cadastros
+    Route::middleware('role:atendente')->prefix('minha-conta')->name('conta.')->group(function () {
+        Route::get('/clientes', [ClienteController::class, 'clientesLogados'])->name('clientes');
     });
 
     // Modelos dependentes da Marca (catálogo local)

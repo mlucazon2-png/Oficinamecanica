@@ -43,9 +43,13 @@
 
                 <div class="col-md-4">
                     <label class="form-label">Km atual</label>
-                    <input type="number" name="km_atual" class="form-control font-mono" min="0"
-                           value="{{ old('km_atual', 0) }}">
+                    <div class="input-group">
+                        <input type="number" name="km_atual" id="km_atual" class="form-control font-mono" min="0"
+                               value="{{ old('km_atual', 0) }}" aria-label="Km atual">
+                        <span class="input-group-text">km</span>
+                    </div>
                 </div>
+
 
 
 
@@ -57,6 +61,8 @@
                     @enderror
                     <div class="form-text">Selecione uma imagem do veículo (parecido com o upload da OS).</div>
                 </div>
+
+
 
             </div>
 

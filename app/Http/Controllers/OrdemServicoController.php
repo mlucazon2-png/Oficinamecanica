@@ -6,6 +6,8 @@ use App\Models\OrdemServico;
 use App\Models\Cliente;
 use App\Models\Veiculo;
 use App\Models\Mecanico;
+use App\Models\User;
+use App\Models\Notificacao;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -59,15 +61,54 @@ class OrdemServicoController extends Controller
             'mecanico_id' => 'nullable|exists:mecanicos,id',
             'sintomas'    => 'required|string|max:2000',
             'km_entrada'  => 'nullable|integer|min:0',
+            // Mídia enviada na abertura da OS (UC003)
+            'foto_defeito' => 'required|image|mimes:jpeg,png,webp|max:5120',
+            'video_defeito' => 'nullable|file|mimes:mp4,webm,ogg,mov,avi|max:10240',
         ]);
 
         $data['numero'] = OrdemServico::gerarNumero();
-        $data['status'] = 'aberta';
+        $data['status'] = 'aguardando_aceitacao';
 
         $os = OrdemServico::create($data);
 
+        // Persistir mídias enviadas na abertura da OS
+        // - RN004: foto
+        if ($request->hasFile('foto_defeito')) {
+            $path = $request->file('foto_defeito')->store("os/{$os->id}", 'public');
+            $os->fotos()->create([
+                'path' => $path,
+                'tipo' => 'entrada',
+                'lado' => 'outro',
+            ]);
+        }
+
+        // - RN004: vídeo (salvo também em fotos_os; no show o preview/stream precisa tratar tipo de arquivo)
+        if ($request->hasFile('video_defeito')) {
+            $path = $request->file('video_defeito')->store("os/{$os->id}", 'public');
+            $os->fotos()->create([
+                'path' => $path,
+                'tipo' => 'entrada',
+                'lado' => 'outro',
+            ]);
+        }
+
+        // Criar notificações para todos os atendentes/gerentes
+        $atendentes = User::whereIn('role', ['atendente', 'gerente'])
+            ->where('id', '!=', Auth::id())
+            ->get();
+
+        foreach ($atendentes as $atendente) {
+            Notificacao::create([
+                'user_id' => $atendente->id,
+                'os_id'   => $os->id,
+                'tipo'    => 'solicitacao_os',
+                'status'  => 'pendente',
+                'mensagem' => "Nova OS #{$os->numero} de {$os->cliente->nome}",
+            ]);
+        }
+
         return redirect()->route('os.show', $os)
-               ->with('success', "OS {$os->numero} aberta com sucesso!");
+               ->with('success', "OS {$os->numero} aberta com sucesso! Aguardando aceitação do assistente.");
     }
 
     // Ver OS completa

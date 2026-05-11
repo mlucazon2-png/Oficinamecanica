@@ -15,8 +15,12 @@
     <div class="card-body border-bottom">
         <form method="GET" class="row g-2 align-items-end">
             <div class="col-md-3">
-                <input type="text" name="busca" class="form-control" placeholder="Número, cliente, placa…" value="{{ request('busca') }}">
+                <input type="text" name="busca" class="form-control" placeholder="Número, placa…" value="{{ request('busca') }}">
             </div>
+
+
+            {{-- Remove busca por cliente (mantém busca por número/placa) --}}
+
             <div class="col-md-2">
                 <select name="status" class="form-select">
                     <option value="">Todos os status</option>
@@ -25,21 +29,16 @@
                     @endforeach
                 </select>
             </div>
+
             <div class="col-md-2">
-                <select name="mecanico_id" class="form-select">
-                    <option value="">Todos mecânicos</option>
-                    @foreach($mecanicos as $m)
-                    <option value="{{ $m->id }}" {{ request('mecanico_id') == $m->id ? 'selected' : '' }}>{{ $m->nome }}</option>
-                    @endforeach
-                </select>
+                <input type="date" name="data_inicio" class="form-control" value="{{ request('data_inicio') }}" style="display:none;">
             </div>
             <div class="col-md-2">
-                <input type="date" name="data_inicio" class="form-control" value="{{ request('data_inicio') }}">
+                <input type="date" name="data_fim" class="form-control" value="{{ request('data_fim') }}" style="display:none;">
             </div>
-            <div class="col-md-2">
-                <input type="date" name="data_fim" class="form-control" value="{{ request('data_fim') }}">
-            </div>
+
             <div class="col-auto">
+
                 <button class="btn btn-outline-secondary"><i class="bi bi-search"></i></button>
                 <a href="{{ route('os.index') }}" class="btn btn-outline-secondary">Limpar</a>
             </div>
@@ -54,9 +53,9 @@
                         <th>Número</th>
                         <th>Cliente</th>
                         <th>Veículo</th>
-                        <th>Mecânico</th>
+
                         <th>Status</th>
-                        <th>Total</th>
+
                         <th>Data</th>
                         <th></th>
                     </tr>
@@ -70,9 +69,9 @@
                             {{ $os->veiculo->marca }} {{ $os->veiculo->modelo }}
                             <br><span class="badge bg-light text-dark font-mono" style="font-size:.7rem">{{ $os->veiculo->placa }}</span>
                         </td>
-                        <td>{{ $os->mecanico->nome ?? '—' }}</td>
+
                         <td><span class="badge badge-{{ $os->status }}">{{ $os->statusLabel() }}</span></td>
-                        <td>R$ {{ number_format($os->valor_total,2,',','.') }}</td>
+
                         <td class="small text-muted">{{ $os->created_at->format('d/m/Y') }}</td>
                         <td class="text-end">
                             <a href="{{ route('os.show',$os->id) }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-eye"></i></a>

@@ -100,4 +100,15 @@ class ClienteController extends Controller
         return view('conta.veiculos', compact('veiculos'));
     }
 
+    public function clientesLogados()
+    {
+        // Busca todos os usuários com role 'cliente' que têm um cliente associado
+        $clientes = Cliente::whereHas('user', fn($q) => $q->where('role', 'cliente'))
+            ->with('user')
+            ->orderBy('nome')
+            ->get();
+
+        return view('conta.clientes', compact('clientes'));
+    }
+
 }

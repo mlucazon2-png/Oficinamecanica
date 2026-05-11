@@ -88,14 +88,7 @@
     </tfoot>
 </table>
 
-@if($ordemServico->garantias->count())
-<div class="mb-3">
-    <strong>Garantias:</strong>
-    @foreach($ordemServico->garantias as $g)
-    <div>• {{ $g->descricao }} — válida até {{ $g->data_fim->format('d/m/Y') }}</div>
-    @endforeach
-</div>
-@endif
+
 
 <div class="row mt-5">
     <div class="col-6 text-center">
