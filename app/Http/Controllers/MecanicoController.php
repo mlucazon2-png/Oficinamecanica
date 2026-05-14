@@ -9,9 +9,13 @@ class MecanicoController extends Controller
 {
     public function index(Request $request)
     {
-        $mecanicos = Mecanico::when($request->busca, fn($q, $b) =>
-            $q->where('nome', 'like', "%{$b}%")
-        )->orderBy('nome')->paginate(20)->withQueryString();
+        $mecanicos = Mecanico::with('user')
+            ->when($request->busca, fn($q, $b) =>
+                $q->where('nome', 'like', "%{$b}%")
+            )
+            ->orderBy('nome')
+            ->paginate(20)
+            ->withQueryString();
 
         return view('mecanicos.index', compact('mecanicos'));
     }

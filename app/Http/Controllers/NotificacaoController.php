@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Mecanico;
 use App\Models\Notificacao;
 use App\Models\OrdemServico;
 use Illuminate\Http\Request;
@@ -35,10 +36,25 @@ class NotificacaoController extends Controller
         }
 
         $notificacao->update(['status' => 'aceita', 'lida' => true]);
-        $notificacao->os->update(['status' => 'em_diagnostico', 'mecanico_id' => auth()->id()]);
+
+        $mecanico = auth()->user()->mecanico;
+
+        if (!$mecanico) {
+            $defaultEmail = env('OS_DEFAULT_MECANICO_EMAIL', 'jose@autotech.com');
+            $mecanico = Mecanico::whereHas('user', fn($q) => $q->where('email', $defaultEmail))->first();
+
+            if (!$mecanico) {
+                return redirect()->back()->with('error', 'Nenhum mecânico disponível para receber esta OS.');
+            }
+        }
+
+        $notificacao->os->update([
+            'status' => 'em_diagnostico',
+            'mecanico_id' => $mecanico->id,
+        ]);
 
         return redirect()->route('os.show', $notificacao->os)
-            ->with('success', 'OS aceita! Você foi atribuído como mecânico.');
+            ->with('success', 'OS aceita! Encaminhada para o mecânico ' . $mecanico->nome . '.');
     }
 
     // Recusar OS

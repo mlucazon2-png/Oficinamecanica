@@ -1,0 +1,15 @@
+body { font-family: 'Roboto', sans-serif; font-size: 13px; }
+
+.font-mono { font-family: 'Roboto Mono', monospace; }
+
+.header-strip {
+    background: #FF6B35;
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 6px;
+    margin-bottom: 1.2rem;
+}
+
+@media print {
+    .no-print { display: none; }
+}

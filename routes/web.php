@@ -14,6 +14,7 @@ use App\Http\Controllers\GarantiaController;
 use App\Http\Controllers\FipeController;
 use App\Http\Controllers\RelatorioController;
 use App\Http\Controllers\NotificacaoController;
+use App\Http\Controllers\RoleAccountController;
 
 // ── Rotas públicas ───────────────────────────────────────────────────────────
 Route::get('/', fn () => redirect()->route('login'));
@@ -127,8 +128,16 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/clientes', [ClienteController::class, 'clientesLogados'])->name('clientes');
     });
 
+    // Gestão de contas para atendente e gerente
+    Route::middleware('role:atendente,gerente')->prefix('minha-conta')->name('conta.')->group(function () {
+        Route::get('/usuarios', [RoleAccountController::class, 'index'])->name('usuarios');
+        Route::get('/usuarios/{user}/detalhes', [RoleAccountController::class, 'detalhes'])->name('usuarios.detalhes');
+        Route::post('/usuarios/solicitar', [RoleAccountController::class, 'solicitar'])->name('usuarios.solicitar');
+        Route::post('/usuarios/autorizar', [RoleAccountController::class, 'autorizar'])->name('usuarios.autorizar');
+        Route::post('/usuarios/fechar', [RoleAccountController::class, 'fechar'])->name('usuarios.fechar');
+    });
+
     // Modelos dependentes da Marca (catálogo local)
     Route::get('/modelos-por-marca/{marcaId}', [VeiculoController::class, 'modelosPorMarca'])
         ->name('veiculos.modelosPorMarca');
 });
-

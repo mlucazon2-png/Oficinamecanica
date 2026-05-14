@@ -11,6 +11,7 @@ class OrdemServico extends Model
     protected $fillable = [
         'numero','cliente_id','veiculo_id','mecanico_id',
         'status','sintomas','diagnostico','observacoes','km_entrada',
+        'motivo_recusa','detalhes_recusa',
         'valor_servicos','valor_pecas','valor_desconto','valor_total',
         'aprovado_cliente','data_aprovacao','data_previsao','data_conclusao',
     ];
@@ -46,8 +47,10 @@ class OrdemServico extends Model
     public function statusLabel(): string
     {
         return match($this->status) {
-            'aguardando_aceitacao' => 'aguardando aprovação',
-
+            'aguardando_aceitacao' => 'Aguardando aceitação de solicitação',
+            'solicitacao_aceita'   => 'Solicitação aceita, aguarde o diagnóstico',
+            'solicitacao_recusada' => 'Solicitação recusada',
+            'orcamento_enviado_atendente' => 'Orçamento enviado ao atendente',
             'aberta'               => 'Aberta',
             'em_diagnostico'       => 'Em Diagnóstico',
             'aguardando_aprovacao' => 'Aguardando Aprovação',
@@ -63,7 +66,10 @@ class OrdemServico extends Model
     public function statusCor(): string
     {
         return match($this->status) {
-            'aguardando_aceitacao' => 'danger',
+            'aguardando_aceitacao' => 'warning',
+            'solicitacao_aceita'   => 'info',
+            'solicitacao_recusada' => 'danger',
+            'orcamento_enviado_atendente' => 'warning',
             'aberta'               => 'secondary',
             'em_diagnostico'       => 'info',
             'aguardando_aprovacao' => 'warning',

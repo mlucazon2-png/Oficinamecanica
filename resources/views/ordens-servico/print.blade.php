@@ -5,12 +5,7 @@
     <title>{{ $ordemServico->numero }} — AutoTech Pro</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Roboto+Mono:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        body { font-family:'Roboto',sans-serif; font-size:13px; }
-        .font-mono { font-family:'Roboto Mono',monospace; }
-        .header-strip { background:#FF6B35; color:#fff; padding:12px 20px; border-radius:6px; margin-bottom:1.2rem; }
-        @media print { .no-print { display:none } }
-    </style>
+    <link href="{{ asset('css/os-print.css') }}?v=1" rel="stylesheet">
 </head>
 <body class="p-4">
 

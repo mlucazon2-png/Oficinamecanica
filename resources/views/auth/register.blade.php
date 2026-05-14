@@ -716,6 +716,41 @@ document.getElementById('register-form').addEventListener('submit', function () 
     btn.disabled = true;
 });
 
+function formatCPF(value) {
+    const digits = value.replace(/\D/g, '').slice(0, 11);
+    return digits
+        .replace(/(\d{3})(\d)/, '$1.$2')
+        .replace(/(\d{3})(\d)/, '$1.$2')
+        .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
+}
+
+function formatPhone(value) {
+    const digits = value.replace(/\D/g, '').slice(0, 11);
+    if (digits.length <= 10) {
+        return digits
+            .replace(/(\d{2})(\d{4})(\d{0,4})/, '($1) $2-$3')
+            .replace(/-$/, '');
+    }
+    return digits
+        .replace(/(\d{2})(\d{5})(\d{0,4})/, '($1) $2-$3')
+        .replace(/-$/, '');
+}
+
+const cpfInput = document.getElementById('cpf');
+const phoneInput = document.getElementById('telefone');
+
+if (cpfInput) {
+    cpfInput.addEventListener('input', function (event) {
+        this.value = formatCPF(this.value);
+    });
+}
+
+if (phoneInput) {
+    phoneInput.addEventListener('input', function (event) {
+        this.value = formatPhone(this.value);
+    });
+}
+
 document.getElementById('btn-submit').addEventListener('click', function (e) {
     const btn  = this;
     const rect = btn.getBoundingClientRect();

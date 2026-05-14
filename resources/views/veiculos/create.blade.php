@@ -38,7 +38,12 @@
 
                 <div class="col-md-4">
                     <label class="form-label">Cor</label>
-                    <input type="text" name="cor" class="form-control" value="{{ old('cor') }}">
+                    <select name="cor" class="form-select" required>
+                        <option value="" @selected(old('cor') === null || old('cor') === '')>Selecione a cor...</option>
+                        @foreach(['Branco','Preto','Prata','Cinza','Vermelho','Azul','Verde','Amarelo','Marrom','Bege','Dourado','Roxo'] as $cor)
+                            <option value="{{ $cor }}" @selected(old('cor') === $cor)>{{ $cor }}</option>
+                        @endforeach
+                    </select>
                 </div>
 
                 <div class="col-md-4">

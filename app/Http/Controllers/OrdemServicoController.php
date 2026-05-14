@@ -17,7 +17,7 @@ class OrdemServicoController extends Controller
     // UC007 — Listar com filtros
     public function index(Request $request)
     {
-        $query = OrdemServico::with(['cliente','veiculo','mecanico'])->latest();
+        $query = OrdemServico::with(['cliente','veiculo','mecanico.user'])->latest();
 
         if ($request->filled('status'))     $query->where('status', $request->status);
         if ($request->filled('mecanico_id'))$query->where('mecanico_id', $request->mecanico_id);
@@ -63,7 +63,7 @@ class OrdemServicoController extends Controller
             'km_entrada'  => 'nullable|integer|min:0',
             // Mídia enviada na abertura da OS (UC003)
             'foto_defeito' => 'required|image|mimes:jpeg,png,webp|max:5120',
-            'video_defeito' => 'nullable|file|mimes:mp4,webm,ogg,mov,avi|max:10240',
+            'video_defeito' => 'nullable|file|mimes:mp4,webm,ogg,mov,avi|max:20480',
         ]);
 
         $data['numero'] = OrdemServico::gerarNumero();
@@ -116,7 +116,7 @@ class OrdemServicoController extends Controller
     {
         $ordemServico = OrdemServico::findOrFail($id);
         $ordemServico->load([
-            'cliente','veiculo','mecanico',
+            'cliente','veiculo','mecanico.user',
             'itens.servico','itens.peca',
             'fotos','garantias',
         ]);

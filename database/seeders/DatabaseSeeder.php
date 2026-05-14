@@ -7,31 +7,48 @@ use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Models\Servico;
 use App\Models\Peca;
+use App\Models\MarcasVeiculos;
+use App\Models\ModelosVeiculos;
 
 class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
         // ── Usuários ────────────────────────────────────────────
-        // Evita duplicidade caso o banco já tenha sido importado/seedado.
-        User::updateOrCreate(
-            ['email' => 'gerente@autotech.com'],
-            [
-                'name'     => 'Gerente AutoTech',
-                'password' => Hash::make('password'),
-                'role'     => 'gerente',
-            ]
-        );
+        $this->call(UserSeeder::class);
 
-        User::updateOrCreate(
-            ['email' => 'atendente@autotech.com'],
-            [
-                'name'     => 'Atendente',
-                'password' => Hash::make('password'),
-                'role'     => 'atendente',
-            ]
-        );
+        // ── Marcas e Modelos de Veículos ────────────────────────
+        $marcas = [
+            'Fiat' => ['Uno', 'Strada', 'Toro', 'Argo', 'Cronos', 'Mobi', 'Palio', 'Doblo', 'Siena', 'Torino'],
+            'Volkswagen' => ['Gol', 'Polo', 'Virtus', 'Nivus', 'T-Cross', 'Golf', 'Passat', 'Jetta', 'Fox', 'Saveiro'],
+            'Chevrolet' => ['Onix', 'Tracker', 'S10', 'Cruze', 'Spin', 'Cobalt', 'Prisma', 'Colorado', 'Camaro', 'Equinox'],
+            'Honda' => ['Civic', 'City', 'HR-V', 'Fit', 'Accord', 'CR-V', 'WR-V', 'Insight', 'Passport', 'Pilot'],
+            'Ford' => ['Ka', 'EcoSport', 'Ranger', 'Fusion', 'Focus', 'Edge', 'Fiesta', 'Mustang', 'Bronco', 'Territory'],
+            'Toyota' => ['Corolla', 'Yaris', 'Hilux', 'RAV4', 'Prius', 'SW4', 'Camry', 'Etios', 'Corolla Cross', 'Land Cruiser'],
+            'Renault' => ['Kwid', 'Sandero', 'Logan', 'Duster', 'Captur', 'Oroch', 'Stepway', 'Fluence', 'Megane', 'Koleos'],
+            'Nissan' => ['Versa', 'Kicks', 'March', 'Sentra', 'Frontier', 'Leaf', 'X-Trail', 'Pathfinder', 'Tiida', 'Rogue'],
+            'Audi' => ['A3', 'A4', 'A6', 'Q3', 'Q5', 'Q7', 'Q8', 'TT', 'RS3', 'e-tron'],
+            'BMW' => ['320i', '330i', 'X1', 'X3', 'X5', 'M3', 'i3', 'Z4', 'X6', 'X7'],
+            'Mercedes-Benz' => ['A200', 'C180', 'E200', 'GLA', 'GLC', 'GLE', 'S500', 'CLA', 'GLS', 'Sprinter'],
+            'Hyundai' => ['HB20', 'Creta', 'Tucson', 'Santa Fe', 'i30', 'Elantra', 'Accent', 'Kona', 'Palisade', 'Hb20S'],
+            'Kia' => ['Picanto', 'Rio', 'Sportage', 'Sorento', 'Soul', 'Cerato', 'Stonic', 'Seltos', 'Carnival', 'Optima'],
+            'Subaru' => ['Impreza', 'Forester', 'Outback', 'WRX', 'Legacy', 'Crosstrek', 'BRZ', 'XV', 'Levorg', 'Tribeca'],
+            'Peugeot' => ['208', '308', '3008', '5008', '2008', '408', '508', 'Partner', 'Expert', 'Rifter'],
+            'Citroen' => ['C3', 'C4 Cactus', 'Aircross', 'C4 Lounge', 'Jumpy', 'SpaceTourer', 'C5 Aircross', 'Berlingo', 'Ami', 'DS3'],
+        ];
 
+        foreach ($marcas as $nome => $modelos) {
+            $marca = MarcasVeiculos::updateOrCreate(['nome' => $nome], ['nome' => $nome]);
+            foreach ($modelos as $modelo) {
+                ModelosVeiculos::updateOrCreate([
+                    'marca_id' => $marca->id,
+                    'nome' => $modelo,
+                ], [
+                    'marca_id' => $marca->id,
+                    'nome' => $modelo,
+                ]);
+            }
+        }
 
         // ── Serviços ────────────────────────────────────────────
         $servicos = [

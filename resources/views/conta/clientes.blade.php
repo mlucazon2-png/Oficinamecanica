@@ -27,7 +27,23 @@
                     @foreach($clientes as $c)
                     <tr>
                         <td class="text-muted small">{{ $c->id }}</td>
-                        <td><strong>{{ $c->nome }}</strong></td>
+                        <td>
+                            <div class="client-name-stack">
+                                <span class="client-avatar" title="{{ $c->user?->isOnline() ? 'Online' : 'Offline' }}">
+                                    @if($c->user?->profilePhotoUrl())
+                                        <img src="{{ $c->user->profilePhotoUrl() }}" alt="{{ $c->nome }}">
+                                    @else
+                                        {{ strtoupper(substr($c->nome, 0, 1)) }}{{ strtoupper(substr(explode(' ', $c->nome)[1] ?? 'X', 0, 1)) }}
+                                    @endif
+                                    <span class="status-dot {{ $c->user?->isOnline() ? 'online' : 'offline' }}"></span>
+                                </span>
+                                <span>
+                                    <strong>{{ $c->nome }}</strong>
+                                    <br>
+                                    <span class="small text-muted">{{ $c->user?->isOnline() ? 'Online agora' : 'Offline' }}</span>
+                                </span>
+                            </div>
+                        </td>
                         <td class="font-mono small">{{ $c->cpf }}</td>
                         <td>{{ $c->telefone }}</td>
                         <td>{{ $c->cidade }} {{ $c->estado ? "/ {$c->estado}" : '' }}</td>

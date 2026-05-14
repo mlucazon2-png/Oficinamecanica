@@ -53,9 +53,8 @@
                         <th>Número</th>
                         <th>Cliente</th>
                         <th>Veículo</th>
-
+                        <th>Mecânico</th>
                         <th>Status</th>
-
                         <th>Data</th>
                         <th></th>
                     </tr>
@@ -69,9 +68,8 @@
                             {{ $os->veiculo->marca }} {{ $os->veiculo->modelo }}
                             <br><span class="badge bg-light text-dark font-mono" style="font-size:.7rem">{{ $os->veiculo->placa }}</span>
                         </td>
-
+                        <td>{{ $os->mecanico->nome ?? '—' }}<br><small class="text-muted">{{ optional($os->mecanico->user)->email ?? '—' }}</small></td>
                         <td><span class="badge badge-{{ $os->status }}">{{ $os->statusLabel() }}</span></td>
-
                         <td class="small text-muted">{{ $os->created_at->format('d/m/Y') }}</td>
                         <td class="text-end">
                             <a href="{{ route('os.show',$os->id) }}" class="btn btn-sm btn-outline-secondary"><i class="bi bi-eye"></i></a>

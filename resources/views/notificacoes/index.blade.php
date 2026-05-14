@@ -53,13 +53,10 @@
                                             <a href="{{ route('os.show', $notif->os) }}" class="btn btn-outline-secondary" title="Ver detalhes">
                                                 <i class="bi bi-eye"></i>
                                             </a>
-                                            <form action="{{ route('notificacoes.aceitar', $notif) }}" method="POST" style="display:inline;" 
-                                                  onsubmit="return confirm('Aceitar esta OS? Você será definido como o mecânico responsável.')">
-                                                @csrf
-                                                <button type="submit" class="btn btn-success btn-sm" title="Aceitar">
-                                                    <i class="bi bi-check-circle"></i> Aceitar
-                                                </button>
-                                            </form>
+                                            <button type="button" class="btn btn-success btn-sm" data-bs-toggle="modal"
+                                                    data-bs-target="#aceitarModal{{ $notif->id }}" title="Aceitar">
+                                                <i class="bi bi-check-circle"></i> Aceitar
+                                            </button>
                                             <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" 
                                                     data-bs-target="#recusarModal{{ $notif->id }}" title="Recusar">
                                                 <i class="bi bi-x-circle"></i> Recusar
@@ -67,6 +64,34 @@
                                         </div>
                                     </td>
                                 </tr>
+
+                                {{-- Modal Aceitar --}}
+                                <div class="modal fade" id="aceitarModal{{ $notif->id }}" tabindex="-1">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title">Aceitar OS #{{ $notif->os->numero }}</h5>
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                                            </div>
+                                            <form action="{{ route('notificacoes.aceitar', $notif) }}" method="POST">
+                                                @csrf
+                                                <div class="modal-body">
+                                                    <label for="mecanico{{ $notif->id }}" class="form-label">Mecânico responsável *</label>
+                                                    <select class="form-select" id="mecanico{{ $notif->id }}" name="mecanico_id" required>
+                                                        <option value="">Selecione...</option>
+                                                        @foreach($mecanicos as $mecanico)
+                                                            <option value="{{ $mecanico->id }}">{{ $mecanico->nome }}</option>
+                                                        @endforeach
+                                                    </select>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                                                    <button type="submit" class="btn btn-success">Aceitar e encaminhar</button>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                </div>
 
                                 {{-- Modal Recusar --}}
                                 <div class="modal fade" id="recusarModal{{ $notif->id }}" tabindex="-1">
@@ -80,9 +105,20 @@
                                                 @csrf
                                                 <div class="modal-body">
                                                     <div class="mb-3">
-                                                        <label for="motivo{{ $notif->id }}" class="form-label">Motivo da recusa:</label>
-                                                        <textarea class="form-control" id="motivo{{ $notif->id }}" name="motivo" rows="3" required 
-                                                                  placeholder="Ex: Falta de peça específica, oficina lotada, etc."></textarea>
+                                                        <label for="motivo{{ $notif->id }}" class="form-label">Motivo da recusa *</label>
+                                                        <select class="form-select" id="motivo{{ $notif->id }}" name="motivo" required>
+                                                            <option value="">Selecione...</option>
+                                                            <option value="Falta de material especifico">Falta de material especifico</option>
+                                                            <option value="Nao trabalhamos com esse servico">Nao trabalhamos com esse servico</option>
+                                                            <option value="Oficina sem agenda no momento">Oficina sem agenda no momento</option>
+                                                            <option value="Veiculo fora do perfil atendido">Veiculo fora do perfil atendido</option>
+                                                            <option value="Outro motivo">Outro motivo</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="mb-3">
+                                                        <label for="detalhes{{ $notif->id }}" class="form-label">Explique para o cliente *</label>
+                                                        <textarea class="form-control" id="detalhes{{ $notif->id }}" name="detalhes_recusa" rows="3" required
+                                                                  placeholder="Escreva com suas palavras o motivo da recusa."></textarea>
                                                     </div>
                                                 </div>
                                                 <div class="modal-footer">

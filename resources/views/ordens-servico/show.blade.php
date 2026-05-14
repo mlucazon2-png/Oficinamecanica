@@ -78,6 +78,11 @@
                     <dt class="col-5 text-muted">Concluída</dt>
                     <dd class="col-7">{{ $ordemServico->data_conclusao->format('d/m/Y H:i') }}</dd>
                     @endif
+
+                    @if($ordemServico->mecanico)
+                    <dt class="col-5 text-muted">Mecânico</dt>
+                    <dd class="col-7">{{ $ordemServico->mecanico->nome }}<br><small class="text-muted">{{ $ordemServico->mecanico->user->email }}</small></dd>
+                    @endif
                 </dl>
             </div>
         </div>

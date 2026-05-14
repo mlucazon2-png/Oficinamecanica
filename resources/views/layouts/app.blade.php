@@ -959,6 +959,9 @@
         <a href="{{ route('mecanicos.index') }}" class="nav-link {{ request()->routeIs('mecanicos.*') ? 'active' : '' }}">
             <i class="bi bi-person-gear"></i> Mecânicos
         </a>
+        <a href="{{ route('conta.usuarios') }}" class="nav-link {{ request()->routeIs('conta.usuarios') ? 'active' : '' }}">
+            <i class="bi bi-person-badge"></i> Contas
+        </a>
         @endif
 
         <div class="nav-label">Oficina</div>

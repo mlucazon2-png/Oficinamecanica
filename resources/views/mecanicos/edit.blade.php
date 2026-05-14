@@ -23,7 +23,12 @@
                 </div>
                 <div class="col-12">
                     <label class="form-label">Especialidade</label>
-                    <input type="text" name="especialidade" class="form-control" value="{{ old('especialidade',$mecanico->especialidade??'') }}" placeholder="Ex: Elétrica, Funilaria, Geral…">
+                    <select name="especialidade" class="form-select" required>
+                        <option value="" @selected(old('especialidade',$mecanico->especialidade ?? '') === '')>Selecione a especialidade...</option>
+                        @foreach(['Funilaria','Mecânica Geral','Pintura'] as $especialidade)
+                            <option value="{{ $especialidade }}" @selected(old('especialidade',$mecanico->especialidade ?? '') === $especialidade)>{{ $especialidade }}</option>
+                        @endforeach
+                    </select>
                 </div>
             </div>
             <div class="mt-4 d-flex gap-2">

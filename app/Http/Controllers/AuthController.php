@@ -3,9 +3,12 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Illuminate\Database\QueryException;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class AuthController extends Controller
 {
@@ -43,7 +46,7 @@ class AuthController extends Controller
             'password_confirmation' => 'required',
 
             // Dados obrigatórios para criar o perfil do cliente
-            'cpf'      => 'required|string|max:14',
+            'cpf'      => ['required', 'string', 'max:14', Rule::unique('clientes', 'cpf')],
             'telefone' => 'required|string|max:20',
         ], [
             'name.required'           => 'O nome é obrigatório.',
@@ -57,28 +60,38 @@ class AuthController extends Controller
 
             'cpf.required'           => 'O CPF é obrigatório.',
             'cpf.max'                => 'O CPF não pode ter mais de 14 caracteres.',
+            'cpf.unique'             => 'Este CPF já está cadastrado.',
             'telefone.required'      => 'O telefone é obrigatório.',
             'telefone.max'           => 'O telefone não pode ter mais de 20 caracteres.',
         ]);
 
 
-        // Criar usuário com role 'cliente' automaticamente
-        $user = User::create([
-            'name'     => $validated['name'],
-            'email'    => $validated['email'],
-            'password' => Hash::make($validated['password']),
-            'role'     => 'cliente',
-        ]);
+        try {
+            $user = DB::transaction(function () use ($validated) {
+                // Criar usuário com role 'cliente' automaticamente
+                $user = User::create([
+                    'name'     => $validated['name'],
+                    'email'    => $validated['email'],
+                    'password' => Hash::make($validated['password']),
+                    'role'     => 'cliente',
+                ]);
 
-        // Criar registro de cliente automaticamente
-        \App\Models\Cliente::create([
-            'user_id'  => $user->id,
-            'nome'     => $validated['name'],
-            // CPF é obrigatório na tabela `clientes`
-            'cpf'      => $request->input('cpf'),
-            'telefone' => $request->input('telefone'),
-            'email'    => $validated['email'],
-        ]);
+                // Criar registro de cliente automaticamente
+                \App\Models\Cliente::create([
+                    'user_id'  => $user->id,
+                    'nome'     => $validated['name'],
+                    'cpf'      => $validated['cpf'],
+                    'telefone' => $validated['telefone'],
+                    'email'    => $validated['email'],
+                ]);
+
+                return $user;
+            });
+        } catch (QueryException $exception) {
+            return back()
+                ->withErrors(['cpf' => 'Este CPF já está cadastrado.'])
+                ->withInput($request->except('password', 'password_confirmation'));
+        }
 
 
         // Fazer login automático

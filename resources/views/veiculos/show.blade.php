@@ -35,10 +35,13 @@
                         }
                     @endphp
 
-                    <div style="flex:0 0 220px; max-width:220px;">
+                    <div style="flex:0 0 220px; max-width:220px; position:relative;">
                         @if(!empty($fotoUrl))
-                            <div style="width:100%;height:220px;overflow:hidden;border-radius:8px;">
-                                <img src="{{ $fotoUrl }}" alt="Foto do veículo" style="width:100%;height:100%;object-fit:cover;display:block;" />
+                            <div style="width:100%;height:220px;overflow:hidden;border-radius:8px; position:relative;">
+                                <img id="veiculo-foto" src="{{ $fotoUrl }}" alt="Foto do veículo" style="width:100%;height:100%;object-fit:cover;display:block;" />
+                                <button id="zoom-foto-btn" type="button" class="btn btn-sm btn-light" style="position:absolute; bottom:10px; right:10px; background:rgba(255,255,255,0.85); border:1px solid rgba(0,0,0,0.1);">
+                                    <i class="bi bi-zoom-in"></i> Zoom
+                                </button>
                             </div>
                         @else
                             <div class="text-muted small" style="height:220px;display:flex;align-items:center;justify-content:center;border:1px dashed var(--border2);border-radius:8px;">Sem foto</div>
@@ -77,6 +80,36 @@
         </div>
     </div>
 </div>
+
+@if(!empty($fotoUrl))
+<div id="zoom-modal" style="display:none;position:fixed;inset:0;z-index:1050;background:rgba(0,0,0,.75);align-items:center;justify-content:center;padding:20px;">
+    <div style="position:relative;max-width:90%;max-height:90%;width:auto;">
+        <button id="zoom-modal-close" type="button" style="position:absolute;top:-12px;right:-12px;width:36px;height:36px;border-radius:50%;border:none;background:#fff;color:#000;cursor:pointer;font-size:18px;box-shadow:0 4px 14px rgba(0,0,0,.25);">×</button>
+        <img src="{{ $fotoUrl }}" alt="Foto do veículo ampliada" style="width:100%;height:auto;max-height:90vh;display:block;border-radius:12px;" />
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const zoomBtn = document.getElementById('zoom-foto-btn');
+        const modal = document.getElementById('zoom-modal');
+        const closeBtn = document.getElementById('zoom-modal-close');
+
+        if (zoomBtn && modal && closeBtn) {
+            zoomBtn.addEventListener('click', function () {
+                modal.style.display = 'flex';
+            });
+            closeBtn.addEventListener('click', function () {
+                modal.style.display = 'none';
+            });
+            modal.addEventListener('click', function (event) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            });
+        }
+    });
+</script>
+@endif
 
 @if($ordens->count() > 0)
 <div class="card mt-3">

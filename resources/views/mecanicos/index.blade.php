@@ -10,12 +10,13 @@
     <div class="card-body p-0">
         <table class="table table-hover mb-0">
             <thead class="table-light">
-                <tr><th>Nome</th><th>CPF</th><th>Especialidade</th><th>Telefone</th><th>Status</th><th></th></tr>
+                <tr><th>Nome</th><th>Email</th><th>CPF</th><th>Especialidade</th><th>Telefone</th><th>Status</th><th></th></tr>
             </thead>
             <tbody>
                 @forelse($mecanicos as $m)
                 <tr>
                     <td>{{ $m->nome }}</td>
+                    <td>{{ $m->user->email ?? '—' }}</td>
                     <td class="font-mono small">{{ $m->cpf ?? '—' }}</td>
                     <td>{{ $m->especialidade ?? '—' }}</td>
                     <td>{{ $m->telefone ?? '—' }}</td>

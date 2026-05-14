@@ -46,9 +46,11 @@
         <div class="card">
             <div class="card-header d-flex justify-content-between align-items-center">
                 <span><i class="bi bi-clipboard2-check me-2"></i>Últimas Ordens de Serviço</span>
-                <a href="{{ route('os.create', ['cliente_id'=>$cliente->id]) }}" class="btn btn-sm btn-primary">
-                    <i class="bi bi-plus-lg me-1"></i>Nova OS
-                </a>
+                @if(auth()->user()->isCliente() && auth()->id() === $cliente->user_id)
+                    <a href="{{ route('os.create') }}" class="btn btn-sm btn-primary">
+                        <i class="bi bi-plus-lg me-1"></i>Nova OS
+                    </a>
+                @endif
             </div>
             <div class="card-body p-0">
                 <table class="table table-hover mb-0">
