@@ -372,7 +372,7 @@
         .btn-nova-os:active { transform: translateY(0); }
 
         .sidebar-toggle {
-            display: none;
+            display: none !important;
             background: none;
             border: 1px solid var(--border2);
             border-radius: var(--radius-sm);
@@ -381,6 +381,57 @@
             cursor: pointer;
             font-size: 16px;
             margin-right: 4px;
+        }
+
+        .sidebar-logo-button {
+            width: 38px;
+            height: 38px;
+            padding: 0;
+            border: 0;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--red), #6f0000);
+            color: #fff;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 12px 30px rgba(196,0,0,.28);
+            text-decoration: none;
+            transition: transform .22s ease, box-shadow .22s ease, background .22s ease;
+            flex-shrink: 0;
+        }
+
+        .sidebar-logo-button:hover {
+            color: #fff;
+            transform: rotate(18deg) scale(1.04);
+            box-shadow: 0 16px 36px rgba(196,0,0,.36);
+        }
+
+        .layout-logo-main {
+            width: 42px !important;
+            height: 42px !important;
+            min-width: 42px !important;
+            border: 0 !important;
+            border-radius: 50% !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            color: #fff !important;
+            background: radial-gradient(circle at 35% 28%, #ff5858 0%, var(--red) 42%, #650000 100%) !important;
+            box-shadow: 0 14px 34px rgba(196,0,0,.34), inset 0 0 0 1px rgba(255,255,255,.16) !important;
+            text-decoration: none !important;
+            flex: 0 0 42px !important;
+            margin-right: 8px !important;
+            transition: transform .22s ease, box-shadow .22s ease !important;
+        }
+
+        .layout-logo-main i {
+            font-size: 18px !important;
+            line-height: 1 !important;
+        }
+
+        .layout-logo-main:hover {
+            color: #fff !important;
+            transform: rotate(18deg) scale(1.04) !important;
+            box-shadow: 0 18px 42px rgba(196,0,0,.42), inset 0 0 0 1px rgba(255,255,255,.2) !important;
         }
 
         #content {
@@ -881,7 +932,7 @@
             #sidebar-overlay { display: block; opacity: 0; pointer-events: none; transition: opacity .25s; }
             #sidebar-overlay.show { opacity: 1; pointer-events: all; }
             #topbar, #content { margin-left: 0; }
-            .sidebar-toggle { display: flex; align-items: center; }
+            .sidebar-toggle { display: flex !important; align-items: center; }
         }
 
         @media (max-width: 576px) {
@@ -896,22 +947,462 @@
             .card { border: 1px solid #ddd; background: #fff; }
         }
 
-        #custom-cursor {
-            width: 8px; height: 8px;
-            background: var(--red);
-            border-radius: 50%;
-            position: fixed;
-            top: 0; left: 0;
-            pointer-events: none;
-            z-index: 99999;
-            transform: translate(-50%, -50%);
-            transition: width .15s, height .15s, background .15s;
-            mix-blend-mode: normal;
+        /* Correcoes finais do layout: lateral so com ferramentas, topo fixo com marca aberta. */
+        #sidebar {
+            width: var(--sidebar-collapsed-w, 68px) !important;
         }
 
-        #custom-cursor.hovered {
-            width: 20px; height: 20px;
-            background: rgba(196,0,0,.4);
+        #sidebar:hover {
+            width: var(--sidebar-w, 236px) !important;
+        }
+
+        #sidebar .sidebar-brand {
+            min-height: 74px !important;
+            justify-content: center !important;
+            padding: 1rem 0 !important;
+        }
+
+        #sidebar .sidebar-brand > div:not(.brand-icon-wrap),
+        #sidebar .brand-name,
+        #sidebar .brand-sub {
+            display: none !important;
+        }
+
+        #topbar {
+            display: flex !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: var(--sidebar-collapsed-w, 68px) !important;
+            right: 0 !important;
+            min-height: 72px !important;
+            padding: 10px 24px !important;
+            border-radius: 0 !important;
+            border: 0 !important;
+            border-bottom: 1px solid rgba(255,255,255,.10) !important;
+            background: linear-gradient(90deg, rgba(2,5,12,.96), rgba(2,5,12,.82)) !important;
+            box-shadow: none !important;
+            backdrop-filter: blur(16px) !important;
+        }
+
+        #topbar .topbar-brand {
+            display: flex !important;
+            align-items: center !important;
+            gap: 10px !important;
+            color: var(--text) !important;
+        }
+
+        #topbar .topbar-brand-icon {
+            width: 38px !important;
+            height: 38px !important;
+            border-radius: 50% !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            flex-shrink: 0 !important;
+            color: #fff !important;
+            background: linear-gradient(135deg, var(--red), #6f0000) !important;
+        }
+
+        #topbar .topbar-brand-name {
+            display: block !important;
+            font-family: 'Syne', sans-serif !important;
+            font-weight: 800 !important;
+            font-size: 14px !important;
+            letter-spacing: .04em !important;
+            line-height: 1.1 !important;
+            color: var(--text) !important;
+        }
+
+        #topbar .topbar-brand-sub {
+            display: block !important;
+            margin-top: 1px !important;
+            font-size: 9px !important;
+            color: var(--text3) !important;
+            text-transform: uppercase !important;
+            letter-spacing: .18em !important;
+        }
+
+        #content {
+            margin-left: var(--sidebar-collapsed-w, 68px) !important;
+            padding-top: 72px !important;
+        }
+
+        .home-hero {
+            margin-top: -72px !important;
+            padding-top: 156px !important;
+        }
+
+        @media (max-width: 900px) {
+            #sidebar {
+                width: 100% !important;
+            }
+
+            #topbar {
+                position: sticky !important;
+                left: 0 !important;
+                min-height: auto !important;
+            }
+
+            #content {
+                margin-left: 0 !important;
+                padding-top: 1rem !important;
+            }
+        }
+    </style>
+
+    <link href="{{ asset('css/app.css') }}?v=22" rel="stylesheet">
+
+    <style>
+        @media (min-width: 901px) {
+            #sidebar {
+                width: var(--sidebar-collapsed-w, 68px) !important;
+                z-index: 800 !important;
+                padding-top: 0 !important;
+                overflow: hidden !important;
+                transition: width .42s cubic-bezier(.22, 1, .36, 1), box-shadow .42s ease !important;
+            }
+
+            #sidebar:hover {
+                width: var(--sidebar-w, 236px) !important;
+                box-shadow: 18px 0 60px rgba(0,0,0,.30) !important;
+            }
+
+            #sidebar:not(:hover) .nav-link span,
+            #sidebar:not(:hover) .nav-label,
+            #sidebar:not(:hover) .user-info-name,
+            #sidebar:not(:hover) .user-role-badge,
+            #sidebar:not(:hover) .btn-logout span {
+                opacity: 0 !important;
+                max-width: 0 !important;
+                overflow: hidden !important;
+                pointer-events: none !important;
+                transform: translateX(-8px) !important;
+            }
+
+            #sidebar:not(:hover) .nav-link {
+                justify-content: center !important;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+                width: 44px !important;
+                height: 44px !important;
+                margin: 4px auto !important;
+            }
+
+            #sidebar:hover .nav-link {
+                justify-content: flex-start !important;
+                width: calc(100% - 1.4rem) !important;
+                height: 40px !important;
+                margin: 1px 0 !important;
+                padding: 7px 1.1rem !important;
+            }
+
+            #sidebar:hover .nav-link span,
+            #sidebar:hover .nav-label {
+                opacity: 1 !important;
+                width: auto !important;
+                max-width: none !important;
+                height: auto !important;
+                pointer-events: auto !important;
+                transform: translateX(0) !important;
+                transition-delay: .08s !important;
+            }
+
+            #sidebar .nav-link span,
+            #sidebar .nav-label {
+                display: inline-block !important;
+                white-space: nowrap !important;
+                transition: opacity .26s ease, transform .32s cubic-bezier(.22, 1, .36, 1), max-width .36s cubic-bezier(.22, 1, .36, 1) !important;
+            }
+
+            #sidebar .nav-link {
+                transition: width .38s cubic-bezier(.22, 1, .36, 1), height .38s cubic-bezier(.22, 1, .36, 1), margin .38s cubic-bezier(.22, 1, .36, 1), padding .38s cubic-bezier(.22, 1, .36, 1), background .18s ease, color .18s ease !important;
+            }
+
+            #sidebar .sidebar-brand {
+                display: none !important;
+                min-height: 0 !important;
+                justify-content: center !important;
+                padding: 1rem 0 !important;
+            }
+
+            #sidebar .sidebar-brand > div:not(.brand-icon-wrap),
+            #sidebar .brand-name,
+            #sidebar .brand-sub {
+                display: none !important;
+            }
+
+            #topbar {
+                left: var(--sidebar-collapsed-w, 68px) !important;
+                right: 0 !important;
+                top: 0 !important;
+                min-height: 72px !important;
+                border-radius: 0 !important;
+                background: linear-gradient(90deg, rgba(2,5,12,.96), rgba(2,5,12,.82)) !important;
+                z-index: 1100 !important;
+            }
+
+            #content {
+                margin-left: var(--sidebar-collapsed-w, 68px) !important;
+                padding-top: 72px !important;
+            }
+
+            .sidebar-logo-button,
+            .layout-logo-main {
+                display: inline-flex !important;
+            }
+
+            .layout-logo-main {
+                position: fixed !important;
+                top: 15px !important;
+                left: 14px !important;
+                z-index: 1200 !important;
+                margin: 0 !important;
+            }
+        }
+    </style>
+
+    <style>
+        @media (min-width: 901px) {
+            #sidebar {
+                width: var(--sidebar-collapsed-w, 68px) !important;
+                z-index: 800 !important;
+                padding-top: 72px !important;
+                overflow: hidden !important;
+                transition: width .46s cubic-bezier(.22, 1, .36, 1), box-shadow .46s ease, background .46s ease !important;
+            }
+
+            #sidebar:hover,
+            #sidebar:focus-within {
+                width: var(--sidebar-w, 236px) !important;
+                box-shadow: 18px 0 54px rgba(0,0,0,.28) !important;
+            }
+
+            #sidebar .sidebar-brand.sidebar-brand-logo {
+                display: flex !important;
+                min-height: 72px !important;
+                height: 72px !important;
+                padding: 0 0 0 13px !important;
+                align-items: center !important;
+                justify-content: flex-start !important;
+                gap: 10px !important;
+                color: #fff !important;
+                text-decoration: none !important;
+                border-bottom: 1px solid rgba(255,255,255,.08) !important;
+                flex: 0 0 72px !important;
+            }
+
+            #sidebar .sidebar-brand-text {
+                display: block !important;
+                min-width: 0 !important;
+                opacity: 0 !important;
+                max-width: 0 !important;
+                overflow: hidden !important;
+                transform: translateX(-8px) !important;
+                transition: opacity .28s ease .08s, max-width .38s cubic-bezier(.22, 1, .36, 1), transform .38s cubic-bezier(.22, 1, .36, 1) !important;
+            }
+
+            #sidebar:hover .sidebar-brand-text,
+            #sidebar:focus-within .sidebar-brand-text {
+                opacity: 1 !important;
+                max-width: 145px !important;
+                transform: translateX(0) !important;
+            }
+
+            #sidebar .sidebar-brand-text .brand-name,
+            #sidebar .sidebar-brand-text .brand-sub {
+                display: block !important;
+                width: auto !important;
+                max-width: none !important;
+                height: auto !important;
+                opacity: 1 !important;
+                overflow: visible !important;
+                white-space: nowrap !important;
+                pointer-events: auto !important;
+            }
+
+            #sidebar:not(:hover):not(:focus-within) .nav-scroll {
+                align-items: center !important;
+            }
+
+            #sidebar:hover .nav-scroll,
+            #sidebar:focus-within .nav-scroll {
+                align-items: stretch !important;
+            }
+
+            #sidebar .nav-link {
+                overflow: hidden !important;
+                transition: width .42s cubic-bezier(.22, 1, .36, 1), height .42s cubic-bezier(.22, 1, .36, 1), margin .42s cubic-bezier(.22, 1, .36, 1), padding .42s cubic-bezier(.22, 1, .36, 1), background .18s ease, color .18s ease, border-color .18s ease !important;
+            }
+
+            #sidebar:not(:hover):not(:focus-within) .nav-link {
+                width: 44px !important;
+                height: 44px !important;
+                margin: 4px auto !important;
+                padding: 0 !important;
+                justify-content: center !important;
+            }
+
+            #sidebar:hover .nav-link,
+            #sidebar:focus-within .nav-link {
+                width: 100% !important;
+                min-height: 40px !important;
+                height: auto !important;
+                margin: 1px 0 !important;
+                padding: 7px 1.1rem !important;
+                justify-content: flex-start !important;
+            }
+
+            #sidebar .nav-link span {
+                display: inline-block !important;
+                overflow: hidden !important;
+                white-space: nowrap !important;
+                transition: opacity .28s ease .06s, max-width .38s cubic-bezier(.22, 1, .36, 1), transform .38s cubic-bezier(.22, 1, .36, 1) !important;
+            }
+
+            #sidebar:not(:hover):not(:focus-within) .nav-link span {
+                opacity: 0 !important;
+                max-width: 0 !important;
+                transform: translateX(-8px) !important;
+                pointer-events: none !important;
+            }
+
+            #sidebar:hover .nav-link span,
+            #sidebar:focus-within .nav-link span {
+                opacity: 1 !important;
+                max-width: 190px !important;
+                transform: translateX(0) !important;
+                pointer-events: auto !important;
+            }
+
+            #sidebar .nav-label {
+                display: block !important;
+                overflow: hidden !important;
+                white-space: nowrap !important;
+                transition: opacity .28s ease, max-height .38s cubic-bezier(.22, 1, .36, 1), padding .38s cubic-bezier(.22, 1, .36, 1), transform .38s cubic-bezier(.22, 1, .36, 1) !important;
+            }
+
+            #sidebar:not(:hover):not(:focus-within) .nav-label {
+                opacity: 0 !important;
+                max-height: 0 !important;
+                padding-top: 0 !important;
+                padding-bottom: 0 !important;
+                transform: translateX(-8px) !important;
+                pointer-events: none !important;
+            }
+
+            #sidebar:hover .nav-label,
+            #sidebar:focus-within .nav-label {
+                opacity: 1 !important;
+                max-height: 36px !important;
+                padding: .85rem 1.2rem .25rem !important;
+                transform: translateX(0) !important;
+                pointer-events: auto !important;
+            }
+
+            #sidebar .sidebar-brand-logo .brand-icon-wrap {
+                width: 42px !important;
+                height: 42px !important;
+                box-shadow: 0 14px 34px rgba(196,0,0,.34), inset 0 0 0 1px rgba(255,255,255,.16) !important;
+            }
+        }
+    </style>
+
+    <style>
+        @media (min-width: 901px) {
+            #topbar {
+                left: 0 !important;
+                right: 0 !important;
+                top: 0 !important;
+                width: 100vw !important;
+                min-height: 72px !important;
+                margin: 0 !important;
+                padding-left: calc(var(--sidebar-collapsed-w, 68px) + 24px) !important;
+                border-radius: 0 !important;
+                border-left: 0 !important;
+                border-top: 0 !important;
+                border-right: 0 !important;
+                border-bottom: 1px solid rgba(255,255,255,.08) !important;
+                background: linear-gradient(90deg, rgba(2,5,12,.96), rgba(2,5,12,.86)) !important;
+                z-index: 900 !important;
+            }
+
+            #sidebar {
+                top: 0 !important;
+                z-index: 1100 !important;
+                padding-top: 0 !important;
+                border-right: 1px solid rgba(255,255,255,.08) !important;
+                background: linear-gradient(180deg, rgba(2,5,12,.96), rgba(2,5,12,.78)) !important;
+            }
+
+            #sidebar .sidebar-brand.sidebar-brand-logo {
+                display: flex !important;
+                min-height: 72px !important;
+                height: 72px !important;
+                border-bottom: 1px solid rgba(255,255,255,.08) !important;
+            }
+
+            #content {
+                margin-left: var(--sidebar-collapsed-w, 68px) !important;
+                padding-top: 72px !important;
+            }
+        }
+    </style>
+
+    <style>
+        @media (min-width: 901px) {
+            .sidebar-toggle,
+            .layout-logo-main {
+                display: none !important;
+            }
+
+            #sidebar {
+                background: #02050c !important;
+                backdrop-filter: none !important;
+            }
+
+            #sidebar::before {
+                content: '' !important;
+                position: absolute !important;
+                inset: 0 !important;
+                background: #02050c !important;
+                z-index: 0 !important;
+                pointer-events: none !important;
+            }
+
+            #sidebar > * {
+                position: relative !important;
+                z-index: 1 !important;
+            }
+
+            #sidebar .sidebar-brand.sidebar-brand-logo > .sidebar-brand-text {
+                display: block !important;
+                min-width: 0 !important;
+                opacity: 0 !important;
+                max-width: 0 !important;
+                height: auto !important;
+                overflow: hidden !important;
+                transform: translateX(-8px) !important;
+                transition: opacity .28s ease .08s, max-width .38s cubic-bezier(.22, 1, .36, 1), transform .38s cubic-bezier(.22, 1, .36, 1) !important;
+            }
+
+            #sidebar:hover .sidebar-brand.sidebar-brand-logo > .sidebar-brand-text,
+            #sidebar:focus-within .sidebar-brand.sidebar-brand-logo > .sidebar-brand-text {
+                opacity: 1 !important;
+                max-width: 150px !important;
+                transform: translateX(0) !important;
+            }
+
+            #sidebar .sidebar-brand.sidebar-brand-logo > .sidebar-brand-text > .brand-name,
+            #sidebar .sidebar-brand.sidebar-brand-logo > .sidebar-brand-text > .brand-sub {
+                display: block !important;
+                opacity: 1 !important;
+                width: auto !important;
+                max-width: none !important;
+                height: auto !important;
+                overflow: visible !important;
+                white-space: nowrap !important;
+                pointer-events: auto !important;
+            }
         }
     </style>
 
@@ -919,62 +1410,60 @@
 </head>
 <body>
 
-<div id="custom-cursor"></div>
-
 <div id="sidebar-overlay"></div>
 
 <nav id="sidebar">
-    <div class="sidebar-brand">
+    <a href="{{ url()->current() }}" class="sidebar-brand sidebar-brand-logo" onclick="window.location.reload(); return false;" aria-label="Atualizar página">
         <div class="brand-icon-wrap">
             <i class="bi bi-gear-wide-connected"></i>
         </div>
-        <div>
+        <div class="sidebar-brand-text">
             <span class="brand-name">AutoTech</span>
             <span class="brand-sub">Oficina Pro</span>
         </div>
-    </div>
+    </a>
 
     <div class="nav-scroll">
         <div class="nav-label">Principal</div>
         <a href="{{ route('dashboard') }}" class="nav-link {{ request()->routeIs('dashboard') ? 'active' : '' }}">
-            <i class="bi bi-speedometer2"></i> Dashboard
+            <i class="bi bi-house-door"></i> <span>Início</span>
         </a>
 
         <div class="nav-label">Cadastros</div>
 
         @if(auth()->user()->isCliente())
         <a href="{{ route('conta.veiculos') }}" class="nav-link {{ request()->routeIs('conta.veiculos') ? 'active' : '' }}">
-            <i class="bi bi-car-front"></i> Veículos
+            <i class="bi bi-car-front"></i> <span>Veículos</span>
         </a>
         @elseif(auth()->user()->isAtendente())
         <a href="{{ route('conta.clientes') }}" class="nav-link {{ request()->routeIs('conta.clientes') ? 'active' : '' }}">
-            <i class="bi bi-people"></i> Clientes
+            <i class="bi bi-people"></i> <span>Clientes</span>
         </a>
         @else
         <a href="{{ route('veiculos.index') }}" class="nav-link {{ request()->routeIs('veiculos.*') ? 'active' : '' }}">
-            <i class="bi bi-car-front"></i> Veículos
+            <i class="bi bi-car-front"></i> <span>Veículos</span>
         </a>
         @endif
         @if(auth()->user()->isGerente() || auth()->user()->isAtendente())
         <a href="{{ route('mecanicos.index') }}" class="nav-link {{ request()->routeIs('mecanicos.*') ? 'active' : '' }}">
-            <i class="bi bi-person-gear"></i> Mecânicos
+            <i class="bi bi-person-gear"></i> <span>Mecânicos</span>
         </a>
         <a href="{{ route('conta.usuarios') }}" class="nav-link {{ request()->routeIs('conta.usuarios') ? 'active' : '' }}">
-            <i class="bi bi-person-badge"></i> Contas
+            <i class="bi bi-person-badge"></i> <span>Contas</span>
         </a>
         @endif
 
         <div class="nav-label">Oficina</div>
         <a href="{{ route('os.index') }}" class="nav-link {{ request()->routeIs('os.*') ? 'active' : '' }}">
-            <i class="bi bi-clipboard2-check"></i> Ordens de Serviço
+            <i class="bi bi-clipboard2-check"></i> <span>Ordens de Serviço</span>
         </a>
         <a href="{{ route('garantias.index') }}" class="nav-link {{ request()->routeIs('garantias.*') ? 'active' : '' }}">
-            <i class="bi bi-shield-check"></i> Garantias
+            <i class="bi bi-shield-check"></i> <span>Garantias</span>
         </a>
 
         @if(auth()->user()->isGerente() || auth()->user()->isAtendente())
         <a href="{{ route('notificacoes.index') }}" class="nav-link {{ request()->routeIs('notificacoes.*') ? 'active' : '' }}">
-            <i class="bi bi-bell"></i> Notificações
+            <i class="bi bi-bell"></i> <span>Notificações</span>
             @php
             $nao_lidas = \App\Models\Notificacao::where('user_id', auth()->id())
                 ->where('lida', false)
@@ -990,50 +1479,51 @@
         @if(auth()->user()->isGerente() || auth()->user()->isAtendente())
         <div class="nav-label">Estoque</div>
         <a href="{{ route('servicos.index') }}" class="nav-link {{ request()->routeIs('servicos.*') ? 'active' : '' }}">
-            <i class="bi bi-tools"></i> Serviços
+            <i class="bi bi-tools"></i> <span>Serviços</span>
         </a>
         <a href="{{ route('pecas.index') }}" class="nav-link {{ request()->routeIs('pecas.*') ? 'active' : '' }}">
-            <i class="bi bi-box-seam"></i> Peças
+            <i class="bi bi-box-seam"></i> <span>Peças</span>
         </a>
         @endif
 
         @if(auth()->user()->isGerente())
         <div class="nav-label">Gestão</div>
         <a href="{{ route('relatorios.index') }}" class="nav-link {{ request()->routeIs('relatorios.*') ? 'active' : '' }}">
-            <i class="bi bi-bar-chart-line"></i> Relatórios
+            <i class="bi bi-bar-chart-line"></i> <span>Relatórios</span>
         </a>
         @endif
+
+        <div class="nav-label">Ferramentas</div>
+        <a href="{{ route('localizacao') }}" class="nav-link {{ request()->routeIs('localizacao') ? 'active' : '' }}">
+            <i class="bi bi-geo-alt"></i> <span>Localização</span>
+        </a>
     </div>
 
-    <div class="sidebar-footer">
-        <div class="user-row">
-            <div class="user-avatar" title="{{ auth()->user()->name }}">
-                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}{{ strtoupper(substr(explode(' ', auth()->user()->name)[1] ?? 'X', 0, 1)) }}
-            </div>
-            <div style="flex:1;min-width:0">
-                <div class="user-info-name">{{ auth()->user()->name }}</div>
-            </div>
-            <div class="user-role-badge">{{ auth()->user()->role }}</div>
-        </div>
-        <form method="POST" action="{{ route('logout') }}">
-            @csrf
-            <button class="btn-logout">
-                <i class="bi bi-box-arrow-left"></i> Sair
-            </button>
-        </form>
-    </div>
+    <div class="sidebar-footer"></div>
 </nav>
 
 <header id="topbar">
-    <button class="sidebar-toggle" onclick="toggleSidebar()" aria-label="Menu">
-        <i class="bi bi-list"></i>
-    </button>
     <div class="breadcrumb-wrap">
         <span>AutoTech</span>
         <span class="bc-sep">›</span>
         <span class="bc-current">@yield('breadcrumb', 'Dashboard')</span>
     </div>
     <div class="topbar-right">
+        <a href="{{ route('perfil.edit') }}" class="topbar-user text-decoration-none" title="Meu perfil">
+            <div class="user-avatar" title="{{ auth()->user()->name }}">
+                {{ strtoupper(substr(auth()->user()->name, 0, 1)) }}{{ strtoupper(substr(explode(' ', auth()->user()->name)[1] ?? 'X', 0, 1)) }}
+            </div>
+            <div style="flex:1;min-width:0">
+                <div class="user-info-name">{{ auth()->user()->name }}</div>
+                <div style="font-size:10px;color:var(--text3);">Meu perfil</div>
+            </div>
+        </a>
+        <form method="POST" action="{{ route('logout') }}" class="no-print">
+            @csrf
+            <button class="btn-logout">
+                <i class="bi bi-box-arrow-left"></i> <span>Sair</span>
+            </button>
+        </form>
         <button class="topbar-btn" title="Pesquisar" onclick="openSearch()">
             <i class="bi bi-search"></i>
         </button>
@@ -1083,12 +1573,6 @@
                 </div>
             </div>
         </div>
-
-        <a href="{{ route('os.create') }}" class="btn-nova-os no-print">
-
-            <i class="bi bi-plus-lg"></i>
-            <span class="btn-text">Nova OS</span>
-        </a>
     </div>
 </header>
 
@@ -1163,26 +1647,6 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-(function() {
-    const cursor = document.getElementById('custom-cursor');
-    let mx = -100, my = -100, cx = -100, cy = -100;
-    let raf;
-    document.addEventListener('mousemove', e => { mx = e.clientX; my = e.clientY; });
-    function loop() {
-        cx += (mx - cx) * 0.18;
-        cy += (my - cy) * 0.18;
-        cursor.style.left = cx + 'px';
-        cursor.style.top  = cy + 'px';
-        raf = requestAnimationFrame(loop);
-    }
-    loop();
-    const interactables = 'a, button, .nav-link, .stat-card, .topbar-btn, .btn-nova-os, input, select, textarea, [role="button"]';
-    document.querySelectorAll(interactables).forEach(el => {
-        el.addEventListener('mouseenter', () => cursor.classList.add('hovered'));
-        el.addEventListener('mouseleave', () => cursor.classList.remove('hovered'));
-    });
-})();
-
 function toggleSidebar() {
     const sb = document.getElementById('sidebar');
     const ov = document.getElementById('sidebar-overlay');

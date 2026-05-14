@@ -15,9 +15,14 @@ use App\Http\Controllers\FipeController;
 use App\Http\Controllers\RelatorioController;
 use App\Http\Controllers\NotificacaoController;
 use App\Http\Controllers\RoleAccountController;
+use App\Http\Controllers\ProfileController;
 
 // ── Rotas públicas ───────────────────────────────────────────────────────────
-Route::get('/', fn () => redirect()->route('login'));
+Route::get('/', function () {
+    return auth()->check()
+        ? redirect()->route('dashboard')
+        : redirect()->route('login');
+});
 
 Route::get ('/login',    [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login',    [AuthController::class, 'login'])->name('login.post');
@@ -33,6 +38,10 @@ Route::post('/orcamento/{token}',  [OrdemServicoController::class, 'autorizar'])
 Route::middleware(['auth'])->group(function () {
 
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/localizacao', fn () => view('localizacao.index'))->name('localizacao');
+    Route::get('/perfil', [ProfileController::class, 'edit'])->name('perfil.edit');
+    Route::put('/perfil', [ProfileController::class, 'update'])->name('perfil.update');
+    Route::patch('/perfil/senha', [ProfileController::class, 'updatePassword'])->name('perfil.password');
 
     // Clientes
     Route::resource('clientes', ClienteController::class);
@@ -121,6 +130,7 @@ Route::middleware(['auth'])->group(function () {
     Route::middleware('role:cliente')->prefix('minha-conta')->name('conta.')->group(function () {
         Route::get('/os',       [ClienteController::class, 'minhasOs'])->name('os');
         Route::get('/veiculos', [ClienteController::class, 'meusVeiculos'])->name('veiculos');
+        Route::post('/senha/solicitar', [RoleAccountController::class, 'solicitarTrocaSenha'])->name('senha.solicitar');
     });
 
     // Área do atendente - Cadastros

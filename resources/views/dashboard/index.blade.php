@@ -10,10 +10,8 @@
     $totalOperacao = max($ordensAtivas + $stats['os_finalizadas_mes'], 1);
     $percentExecucao = min(100, round(($stats['os_em_execucao'] / $totalOperacao) * 100));
     $percentAguardando = min(100, round(($stats['os_aguardando'] / $totalOperacao) * 100));
-    $heroTitulo = $user->isCliente() ? 'SEU CARRO MERECE CUIDADO DE VERDADE' : 'SEU CARRO MERECE MÃOS DE ESPECIALISTA';
-    $heroTexto = $user->isCliente()
-        ? 'Acompanhe solicitações, aprovações e o andamento dos serviços com clareza.'
-        : 'Visualize solicitações, diagnósticos, aprovações e execução em uma central mais direta.';
+    $heroTitulo = 'SOMOS APAIXONADOS EM SERVIR, VOCÊ';
+    $heroTexto = 'Acompanhe solicitações, aprovações e o andamento dos serviços com uma visão clara, rápida e feita para o ritmo da oficina.';
 @endphp
 
 <section class="home-hero">
@@ -189,72 +187,6 @@
     </div>
 
     <aside class="home-side">
-        <div class="card home-status-card">
-            <div class="card-header">
-                <span><i class="bi bi-signpost-split me-2 text-danger"></i>Fluxo da OS</span>
-            </div>
-            <div class="card-body">
-                <div class="home-flow">
-                    <div class="active">
-                        <span></span>
-                        <div>
-                            <strong>Solicitação</strong>
-                            <small>Cliente abre o pedido</small>
-                        </div>
-                    </div>
-                    <div class="{{ $stats['os_abertas'] || $stats['os_em_execucao'] || $stats['os_aguardando'] ? 'active' : '' }}">
-                        <span></span>
-                        <div>
-                            <strong>Aceite</strong>
-                            <small>Atendente direciona</small>
-                        </div>
-                    </div>
-                    <div class="{{ $stats['os_em_execucao'] || $stats['os_aguardando'] ? 'active' : '' }}">
-                        <span></span>
-                        <div>
-                            <strong>Diagnóstico</strong>
-                            <small>Mecânico orça</small>
-                        </div>
-                    </div>
-                    <div class="{{ $stats['os_aguardando'] ? 'active' : '' }}">
-                        <span></span>
-                        <div>
-                            <strong>Aprovação</strong>
-                            <small>Cliente decide</small>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="card">
-            <div class="card-header">
-                <span><i class="bi bi-speedometer2 me-2 text-info"></i>Resumo</span>
-            </div>
-            <div class="card-body">
-                <div class="home-summary-list">
-                    <div>
-                        <span>Finalizadas no mês</span>
-                        <strong>{{ $stats['os_finalizadas_mes'] }}</strong>
-                    </div>
-                    @if(! $user->isCliente())
-                        <div>
-                            <span>Clientes cadastrados</span>
-                            <strong>{{ $stats['total_clientes'] }}</strong>
-                        </div>
-                        <div>
-                            <span>Mecânicos ativos</span>
-                            <strong>{{ $stats['mecanicos_ativos'] }}</strong>
-                        </div>
-                        <div>
-                            <span>Peças críticas</span>
-                            <strong>{{ $stats['pecas_criticas'] }}</strong>
-                        </div>
-                    @endif
-                </div>
-            </div>
-        </div>
-
         @if(! $user->isCliente())
             <div class="card">
                 <div class="card-header">
